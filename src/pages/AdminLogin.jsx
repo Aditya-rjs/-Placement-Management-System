@@ -1,11 +1,11 @@
 /**
  * AdminLogin.jsx
- * Placeholder Admin login page.
- * Backend authentication will be implemented in a future module.
+ * Technical Admin Portal Authentication Page.
  */
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Shield, ArrowLeft, Eye, EyeOff, Lock, Mail, Building2 } from 'lucide-react';
 import { APP_CONFIG } from '../config/app.config';
 import '../styles/Auth.css';
 
@@ -17,8 +17,8 @@ function validateEmail(email) {
 }
 
 export default function AdminLogin() {
-  const [form, setForm]       = useState(INITIAL_STATE);
-  const [errors, setErrors]   = useState(INITIAL_ERRORS);
+  const [form, setForm]         = useState(INITIAL_STATE);
+  const [errors, setErrors]     = useState(INITIAL_ERRORS);
   const [showPass, setShowPass] = useState(false);
 
   const handleChange = (e) => {
@@ -29,10 +29,10 @@ export default function AdminLogin() {
 
   const validate = () => {
     const newErrors = { ...INITIAL_ERRORS };
-    if (!form.email)               newErrors.email = 'Email is required.';
-    else if (!validateEmail(form.email)) newErrors.email = 'Enter a valid email address.';
-    if (!form.password)            newErrors.password = 'Password is required.';
-    else if (form.password.length < 6) newErrors.password = 'Password must be at least 6 characters.';
+    if (!form.email)                    newErrors.email = 'Administrator email is required.';
+    else if (!validateEmail(form.email)) newErrors.email = 'Enter a valid administrator email.';
+    if (!form.password)                 newErrors.password = 'Password is required.';
+    else if (form.password.length < 6)  newErrors.password = 'Password must be at least 6 characters.';
     setErrors(newErrors);
     return !Object.values(newErrors).some(Boolean);
   };
@@ -40,8 +40,7 @@ export default function AdminLogin() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      // TODO: Implement backend authentication in future module
-      alert('Admin login submitted (backend not yet implemented).');
+      alert('Admin credentials submitted for verification (Backend auth enabled in Module 5).');
     }
   };
 
@@ -49,18 +48,20 @@ export default function AdminLogin() {
     <div className="auth-page" id="admin-login-page">
       <div className="auth-card">
 
-        <Link to="/" className="auth-back-link" aria-label="Back to home">
-          ← Back to Home
+        <Link to="/" className="auth-back-link">
+          <ArrowLeft size={16} /> Back to Overview
         </Link>
 
         <div className="auth-card-header">
-          <div className="auth-card-icon admin" aria-hidden="true">🛡️</div>
-          <div className="auth-college-tag">
-            🏛️ {APP_CONFIG.collegeName}
+          <div className="auth-card-icon-badge admin">
+            <Shield size={26} />
           </div>
-          <h1 className="auth-card-title">Admin Login</h1>
+          <div className="auth-college-tag">
+            <Building2 size={13} /> {APP_CONFIG.collegeName}
+          </div>
+          <h1 className="auth-card-title">Admin Control Portal</h1>
           <p className="auth-card-subtitle">
-            Access the admin panel to manage the placement system.
+            System administration &amp; enterprise security controls
           </p>
         </div>
 
@@ -69,28 +70,21 @@ export default function AdminLogin() {
           className="auth-form"
           onSubmit={handleSubmit}
           noValidate
-          aria-label="Admin login form"
         >
           {/* Email */}
           <div className="form-group">
-            <label className="form-label" htmlFor="admin-email">Email Address</label>
+            <label className="form-label" htmlFor="admin-email">Admin Email</label>
             <input
               id="admin-email"
               name="email"
               type="email"
               className={`form-input${errors.email ? ' error' : ''}`}
-              placeholder="admin@college.edu"
+              placeholder="admin@xyztech.edu.in"
               value={form.email}
               onChange={handleChange}
               autoComplete="email"
-              aria-describedby={errors.email ? 'admin-email-error' : undefined}
-              aria-invalid={!!errors.email}
             />
-            {errors.email && (
-              <span id="admin-email-error" className="form-error" role="alert">
-                {errors.email}
-              </span>
-            )}
+            {errors.email && <span className="form-error">{errors.email}</span>}
           </div>
 
           {/* Password */}
@@ -102,12 +96,10 @@ export default function AdminLogin() {
                 name="password"
                 type={showPass ? 'text' : 'password'}
                 className={`form-input${errors.password ? ' error' : ''}`}
-                placeholder="Enter your password"
+                placeholder="••••••••••••"
                 value={form.password}
                 onChange={handleChange}
                 autoComplete="current-password"
-                aria-describedby={errors.password ? 'admin-password-error' : undefined}
-                aria-invalid={!!errors.password}
               />
               <button
                 type="button"
@@ -115,30 +107,25 @@ export default function AdminLogin() {
                 onClick={() => setShowPass(p => !p)}
                 aria-label={showPass ? 'Hide password' : 'Show password'}
               >
-                {showPass ? '🙈' : '👁️'}
+                {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-            {errors.password && (
-              <span id="admin-password-error" className="form-error" role="alert">
-                {errors.password}
-              </span>
-            )}
+            {errors.password && <span className="form-error">{errors.password}</span>}
           </div>
 
           <button
             id="admin-login-submit-btn"
             type="submit"
-            className="auth-submit-btn admin"
-            aria-label="Submit admin login"
+            className="btn btn-primary auth-submit-btn"
+            style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)' }}
           >
-            🔐 Login as Admin
+            <Lock size={16} /> Authenticate Admin
           </button>
         </form>
 
         <div className="auth-footer-links">
           <p>
-            Not the right portal?{' '}
-            <Link to="/" id="admin-go-home-link">Go back home</Link>
+            Authorized access only. <Link to="/">Return to main page</Link>
           </p>
         </div>
       </div>

@@ -1,15 +1,17 @@
 /**
  * PlaceholderPage.jsx
- * Generic placeholder for pages not yet built (Privacy, Terms, etc.)
+ * Technical Under Construction / Module Coming Soon Page.
  */
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Construction, ArrowLeft } from 'lucide-react';
+import { APP_CONFIG } from '../config/app.config';
 
 export default function PlaceholderPage() {
   const location = useLocation();
   const pageName = location.pathname.replace('/', '').replace(/-/g, ' ')
-    .split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || 'Page';
+    .split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || 'Module Page';
 
   return (
     <div
@@ -26,32 +28,41 @@ export default function PlaceholderPage() {
       }}
       id="placeholder-page"
     >
-      <div style={{ fontSize: '3.5rem' }}>🚧</div>
+      <div
+        style={{
+          width: '64px',
+          height: '64px',
+          borderRadius: 'var(--radius-xl)',
+          background: 'var(--color-primary-subtle)',
+          border: '1px solid var(--color-border-active)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'var(--color-primary-light)',
+          marginBottom: '0.5rem',
+        }}
+      >
+        <Construction size={32} />
+      </div>
+
+      <span className="mono-badge">{APP_CONFIG.appShortName} • Module In Progress</span>
+
       <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', color: 'var(--color-text)' }}>
         {pageName}
       </h1>
-      <p style={{ color: 'var(--color-text-secondary)', maxWidth: 400, lineHeight: 1.7 }}>
-        This page is currently under construction and will be available in a future module.
-        Thank you for your patience!
+
+      <p style={{ color: 'var(--color-text-secondary)', maxWidth: 460, fontSize: 'var(--font-size-sm)', lineHeight: 1.6 }}>
+        This module is scheduled for implementation in upcoming project iterations.
+        The initial Landing Dashboard and Portal Access (Module 1) are active.
       </p>
+
       <Link
         to="/"
         id="placeholder-go-home-btn"
-        style={{
-          marginTop: '1rem',
-          padding: '0.75rem 2rem',
-          background: 'var(--gradient-primary)',
-          color: '#fff',
-          borderRadius: 'var(--radius-full)',
-          fontWeight: 600,
-          fontSize: '0.875rem',
-          boxShadow: '0 4px 15px rgba(99,102,241,0.35)',
-          transition: 'all 0.25s ease',
-          textDecoration: 'none',
-          display: 'inline-block',
-        }}
+        className="btn btn-primary btn-sm"
+        style={{ marginTop: '1rem' }}
       >
-        ← Back to Home
+        <ArrowLeft size={16} /> Return to System Overview
       </Link>
     </div>
   );

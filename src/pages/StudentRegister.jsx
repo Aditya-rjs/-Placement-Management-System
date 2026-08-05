@@ -1,33 +1,35 @@
 /**
  * StudentRegister.jsx
- * Student registration form with comprehensive frontend validation.
- * Backend integration will be added in a future module.
- *
- * Fields: Full Name, Branch, Registration Number, Batch,
- *         Phone Number, Email, Password, Confirm Password
+ * Technical Student Candidate Registration Form.
  */
 
 import React, { useState, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import {
+  UserPlus,
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  Building2,
+  CheckCircle2,
+  UserCheck
+} from 'lucide-react';
 import { APP_CONFIG } from '../config/app.config';
 import '../styles/Auth.css';
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
 const BRANCHES = [
-  'Computer Engineering',
+  'Computer Science & Engineering',
   'Information Technology',
   'Electronics & Telecommunication',
+  'Artificial Intelligence & Data Science',
   'Mechanical Engineering',
   'Civil Engineering',
   'Electrical Engineering',
   'Chemical Engineering',
-  'Instrumentation Engineering',
-  'Production Engineering',
-  'Other',
+  'Other Stream',
 ];
 
-const BATCHES = ['2021-2025', '2022-2026', '2023-2027', '2024-2028', '2025-2029'];
+const BATCHES = ['2021 - 2025', '2022 - 2026', '2023 - 2027', '2024 - 2028'];
 
 const INITIAL_FORM = {
   fullName: '',
@@ -42,8 +44,6 @@ const INITIAL_FORM = {
 
 const INITIAL_ERRORS = Object.fromEntries(Object.keys(INITIAL_FORM).map(k => [k, '']));
 
-// ─── Validators ───────────────────────────────────────────────────────────────
-
 const VALIDATORS = {
   fullName: (v) => {
     if (!v.trim()) return 'Full name is required.';
@@ -51,17 +51,17 @@ const VALIDATORS = {
     if (!/^[a-zA-Z\s.'-]+$/.test(v)) return 'Name can only contain letters and spaces.';
     return '';
   },
-  branch: (v) => (!v ? 'Please select your branch.' : ''),
+  branch: (v) => (!v ? 'Please select your engineering branch.' : ''),
   regNumber: (v) => {
     if (!v.trim()) return 'Registration number is required.';
     if (v.trim().length < 5) return 'Registration number must be at least 5 characters.';
     return '';
   },
-  batch: (v) => (!v ? 'Please select your batch.' : ''),
+  batch: (v) => (!v ? 'Please select your graduation batch.' : ''),
   phone: (v) => {
     if (!v.trim()) return 'Phone number is required.';
     if (!/^[6-9]\d{9}$/.test(v.replace(/\s/g, '')))
-      return 'Enter a valid 10-digit Indian mobile number.';
+      return 'Enter a valid 10-digit mobile number.';
     return '';
   },
   email: (v) => {
@@ -72,8 +72,8 @@ const VALIDATORS = {
   password: (v) => {
     if (!v) return 'Password is required.';
     if (v.length < 8) return 'Password must be at least 8 characters.';
-    if (!/[A-Z]/.test(v)) return 'Password must contain at least one uppercase letter.';
-    if (!/[0-9]/.test(v)) return 'Password must contain at least one number.';
+    if (!/[A-Z]/.test(v)) return 'Must contain at least 1 uppercase letter.';
+    if (!/[0-9]/.test(v)) return 'Must contain at least 1 number.';
     return '';
   },
   confirmPassword: (v, form) => {
@@ -82,8 +82,6 @@ const VALIDATORS = {
     return '';
   },
 };
-
-// ─── Password Strength Helper ─────────────────────────────────────────────────
 
 function getPasswordStrength(password) {
   if (!password) return { score: 0, label: '', color: '' };
@@ -94,18 +92,13 @@ function getPasswordStrength(password) {
   if (/[0-9]/.test(password)) score++;
   if (/[^A-Za-z0-9]/.test(password)) score++;
 
-  if (score <= 1) return { score: 20, label: 'Very Weak', color: '#ef4444' };
-  if (score === 2) return { score: 40, label: 'Weak',      color: '#f59e0b' };
-  if (score === 3) return { score: 60, label: 'Fair',      color: '#eab308' };
-  if (score === 4) return { score: 80, label: 'Strong',    color: '#10b981' };
-  return                  { score: 100, label: 'Very Strong', color: '#06b6d4' };
+  if (score <= 1) return { score: 20, label: 'Weak', color: '#ef4444' };
+  if (score === 2) return { score: 40, label: 'Fair', color: '#f59e0b' };
+  if (score === 3) return { score: 70, label: 'Good', color: '#3b82f6' };
+  return                  { score: 100, label: 'Strong', color: '#10b981' };
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export default function StudentRegister() {
-  const navigate = useNavigate();
-
   const [form, setForm]           = useState(INITIAL_FORM);
   const [errors, setErrors]       = useState(INITIAL_ERRORS);
   const [showPass, setShowPass]   = useState(false);
@@ -115,7 +108,6 @@ export default function StudentRegister() {
 
   const strength = getPasswordStrength(form.password);
 
-  // Validate a single field
   const validateField = useCallback((name, value, currentForm) => {
     const validator = VALIDATORS[name];
     if (!validator) return '';
@@ -127,12 +119,10 @@ export default function StudentRegister() {
     const updatedForm = { ...form, [name]: value };
     setForm(updatedForm);
 
-    // Live validation if field was touched
     if (touched[name]) {
       setErrors(prev => ({
         ...prev,
         [name]: validateField(name, value, updatedForm),
-        // Re-validate confirm password if password changes
         ...(name === 'password' && touched.confirmPassword
           ? { confirmPassword: VALIDATORS.confirmPassword(updatedForm.confirmPassword, updatedForm) }
           : {}),
@@ -163,27 +153,27 @@ export default function StudentRegister() {
     e.preventDefault();
     if (!validateAll()) return;
     setSubmitted(true);
-    // TODO: Call backend API in future module
   };
 
   if (submitted) {
     return (
       <div className="auth-page" id="student-register-success-page">
-        <div className="auth-card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎉</div>
-          <h1 className="auth-card-title" style={{ marginBottom: '1rem' }}>
-            Registration Submitted!
+        <div className="auth-card" style={{ textAlign: 'center', maxWidth: '500px' }}>
+          <div className="auth-card-icon-badge student" style={{ width: '64px', height: '64px', margin: '0 auto 1.5rem' }}>
+            <CheckCircle2 size={32} />
+          </div>
+          <h1 className="auth-card-title" style={{ marginBottom: '0.5rem' }}>
+            Candidate Profile Created
           </h1>
-          <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem', lineHeight: 1.7 }}>
-            Your registration details have been captured successfully.<br />
-            Backend integration will be enabled in the next module.
+          <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem', fontSize: 'var(--font-size-sm)', lineHeight: 1.6 }}>
+            Your student candidate registration for <strong>{form.fullName}</strong> ({form.regNumber}) has been submitted successfully.
           </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link to="/login/student" className="btn btn-primary" id="goto-student-login-btn">
-              Go to Login
+          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+            <Link to="/login/student" className="btn btn-primary btn-sm" id="goto-student-login-btn">
+              Proceed to Student Login
             </Link>
-            <Link to="/" className="btn btn-outline" id="goto-home-btn">
-              Back to Home
+            <Link to="/" className="btn btn-outline btn-sm" id="goto-home-btn">
+              Back to Overview
             </Link>
           </div>
         </div>
@@ -195,16 +185,20 @@ export default function StudentRegister() {
     <div className="auth-page" id="student-register-page">
       <div className="auth-card wide">
 
-        <Link to="/login/student" className="auth-back-link" aria-label="Back to student login">
-          ← Back to Login
+        <Link to="/login/student" className="auth-back-link">
+          <ArrowLeft size={16} /> Back to Student Login
         </Link>
 
         <div className="auth-card-header">
-          <div className="auth-card-icon student" aria-hidden="true">✨</div>
-          <div className="auth-college-tag">🏛️ {APP_CONFIG.collegeName}</div>
-          <h1 className="auth-card-title">Student Registration</h1>
+          <div className="auth-card-icon-badge student">
+            <UserPlus size={26} />
+          </div>
+          <div className="auth-college-tag">
+            <Building2 size={13} /> {APP_CONFIG.collegeName}
+          </div>
+          <h1 className="auth-card-title">Student Candidate Registration</h1>
           <p className="auth-card-subtitle">
-            Create your account to access placement drives and opportunities.
+            Register your candidate record for upcoming placement drives &amp; recruitment activities
           </p>
         </div>
 
@@ -213,7 +207,6 @@ export default function StudentRegister() {
           className="auth-form"
           onSubmit={handleSubmit}
           noValidate
-          aria-label="Student registration form"
         >
           <div className="form-grid-2">
 
@@ -225,25 +218,18 @@ export default function StudentRegister() {
                 name="fullName"
                 type="text"
                 className={`form-input${errors.fullName ? ' error' : ''}`}
-                placeholder="e.g. Rahul Sharma"
+                placeholder="Rahul Sharma"
                 value={form.fullName}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 autoComplete="name"
-                aria-describedby={errors.fullName ? 'reg-fullname-error' : undefined}
-                aria-invalid={!!errors.fullName}
-                aria-required="true"
               />
-              {errors.fullName && (
-                <span id="reg-fullname-error" className="form-error" role="alert">
-                  {errors.fullName}
-                </span>
-              )}
+              {errors.fullName && <span className="form-error">{errors.fullName}</span>}
             </div>
 
             {/* Branch */}
             <div className="form-group">
-              <label className="form-label" htmlFor="reg-branch">Branch *</label>
+              <label className="form-label" htmlFor="reg-branch">Academic Branch *</label>
               <select
                 id="reg-branch"
                 name="branch"
@@ -251,20 +237,13 @@ export default function StudentRegister() {
                 value={form.branch}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                aria-describedby={errors.branch ? 'reg-branch-error' : undefined}
-                aria-invalid={!!errors.branch}
-                aria-required="true"
               >
-                <option value="">Select your branch</option>
+                <option value="">Select Engineering Branch</option>
                 {BRANCHES.map(b => (
                   <option key={b} value={b}>{b}</option>
                 ))}
               </select>
-              {errors.branch && (
-                <span id="reg-branch-error" className="form-error" role="alert">
-                  {errors.branch}
-                </span>
-              )}
+              {errors.branch && <span className="form-error">{errors.branch}</span>}
             </div>
 
             {/* Registration Number */}
@@ -275,24 +254,17 @@ export default function StudentRegister() {
                 name="regNumber"
                 type="text"
                 className={`form-input${errors.regNumber ? ' error' : ''}`}
-                placeholder="e.g. 2021COMP0001"
+                placeholder="2021CSE084"
                 value={form.regNumber}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                aria-describedby={errors.regNumber ? 'reg-regnumber-error' : undefined}
-                aria-invalid={!!errors.regNumber}
-                aria-required="true"
               />
-              {errors.regNumber && (
-                <span id="reg-regnumber-error" className="form-error" role="alert">
-                  {errors.regNumber}
-                </span>
-              )}
+              {errors.regNumber && <span className="form-error">{errors.regNumber}</span>}
             </div>
 
             {/* Batch */}
             <div className="form-group">
-              <label className="form-label" htmlFor="reg-batch">Batch *</label>
+              <label className="form-label" htmlFor="reg-batch">Graduation Batch *</label>
               <select
                 id="reg-batch"
                 name="batch"
@@ -300,88 +272,63 @@ export default function StudentRegister() {
                 value={form.batch}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                aria-describedby={errors.batch ? 'reg-batch-error' : undefined}
-                aria-invalid={!!errors.batch}
-                aria-required="true"
               >
-                <option value="">Select your batch</option>
+                <option value="">Select Graduation Batch</option>
                 {BATCHES.map(b => (
                   <option key={b} value={b}>{b}</option>
                 ))}
               </select>
-              {errors.batch && (
-                <span id="reg-batch-error" className="form-error" role="alert">
-                  {errors.batch}
-                </span>
-              )}
+              {errors.batch && <span className="form-error">{errors.batch}</span>}
             </div>
 
             {/* Phone */}
             <div className="form-group">
-              <label className="form-label" htmlFor="reg-phone">Phone Number *</label>
+              <label className="form-label" htmlFor="reg-phone">Contact Phone *</label>
               <input
                 id="reg-phone"
                 name="phone"
                 type="tel"
                 className={`form-input${errors.phone ? ' error' : ''}`}
-                placeholder="10-digit mobile number"
+                placeholder="9876543210"
                 value={form.phone}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 maxLength={10}
-                autoComplete="tel"
-                aria-describedby={errors.phone ? 'reg-phone-error' : undefined}
-                aria-invalid={!!errors.phone}
-                aria-required="true"
               />
-              {errors.phone && (
-                <span id="reg-phone-error" className="form-error" role="alert">
-                  {errors.phone}
-                </span>
-              )}
+              {errors.phone && <span className="form-error">{errors.phone}</span>}
             </div>
 
             {/* Email */}
             <div className="form-group">
-              <label className="form-label" htmlFor="reg-email">Email Address *</label>
+              <label className="form-label" htmlFor="reg-email">Institutional Email *</label>
               <input
                 id="reg-email"
                 name="email"
                 type="email"
                 className={`form-input${errors.email ? ' error' : ''}`}
-                placeholder="you@college.edu"
+                placeholder="rahul.sharma@xyztech.edu.in"
                 value={form.email}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 autoComplete="email"
-                aria-describedby={errors.email ? 'reg-email-error' : undefined}
-                aria-invalid={!!errors.email}
-                aria-required="true"
               />
-              {errors.email && (
-                <span id="reg-email-error" className="form-error" role="alert">
-                  {errors.email}
-                </span>
-              )}
+              {errors.email && <span className="form-error">{errors.email}</span>}
             </div>
 
             {/* Password */}
             <div className="form-group full">
-              <label className="form-label" htmlFor="reg-password">Password *</label>
+              <label className="form-label" htmlFor="reg-password">Account Password *</label>
               <div className="input-wrapper">
                 <input
                   id="reg-password"
                   name="password"
                   type={showPass ? 'text' : 'password'}
                   className={`form-input${errors.password ? ' error' : ''}`}
-                  placeholder="Min 8 chars, 1 uppercase, 1 number"
+                  placeholder="Min 8 chars, 1 uppercase letter, 1 number"
                   value={form.password}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   autoComplete="new-password"
-                  aria-describedby={errors.password ? 'reg-password-error' : 'reg-password-strength'}
-                  aria-invalid={!!errors.password}
-                  aria-required="true"
                 />
                 <button
                   type="button"
@@ -389,31 +336,20 @@ export default function StudentRegister() {
                   onClick={() => setShowPass(p => !p)}
                   aria-label={showPass ? 'Hide password' : 'Show password'}
                 >
-                  {showPass ? '🙈' : '👁️'}
+                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
-              {errors.password && (
-                <span id="reg-password-error" className="form-error" role="alert">
-                  {errors.password}
-                </span>
-              )}
+              {errors.password && <span className="form-error">{errors.password}</span>}
               {form.password && !errors.password && (
-                <div className="password-strength" id="reg-password-strength" aria-live="polite">
+                <div className="password-strength">
                   <div className="password-strength-bar">
                     <div
                       className="password-strength-fill"
                       style={{ width: `${strength.score}%`, background: strength.color }}
-                      aria-valuenow={strength.score}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      role="progressbar"
                     />
                   </div>
-                  <span
-                    className="password-strength-text"
-                    style={{ color: strength.color }}
-                  >
-                    {strength.label}
+                  <span className="password-strength-text" style={{ color: strength.color }}>
+                    Password Strength: {strength.label}
                   </span>
                 </div>
               )}
@@ -428,31 +364,24 @@ export default function StudentRegister() {
                   name="confirmPassword"
                   type={showConf ? 'text' : 'password'}
                   className={`form-input${errors.confirmPassword ? ' error' : ''}`}
-                  placeholder="Re-enter your password"
+                  placeholder="Re-enter password"
                   value={form.confirmPassword}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   autoComplete="new-password"
-                  aria-describedby={errors.confirmPassword ? 'reg-confirm-error' : undefined}
-                  aria-invalid={!!errors.confirmPassword}
-                  aria-required="true"
                 />
                 <button
                   type="button"
                   className="input-toggle-btn"
                   onClick={() => setShowConf(p => !p)}
-                  aria-label={showConf ? 'Hide confirm password' : 'Show confirm password'}
+                  aria-label={showConf ? 'Hide password' : 'Show password'}
                 >
-                  {showConf ? '🙈' : '👁️'}
+                  {showConf ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
-              {errors.confirmPassword && (
-                <span id="reg-confirm-error" className="form-error" role="alert">
-                  {errors.confirmPassword}
-                </span>
-              )}
+              {errors.confirmPassword && <span className="form-error">{errors.confirmPassword}</span>}
               {form.confirmPassword && !errors.confirmPassword && form.password === form.confirmPassword && (
-                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-success)' }}>
+                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-success)', fontWeight: 500 }}>
                   ✓ Passwords match
                 </span>
               )}
@@ -463,17 +392,16 @@ export default function StudentRegister() {
           <button
             id="student-register-submit-btn"
             type="submit"
-            className="auth-submit-btn register"
-            aria-label="Submit student registration"
+            className="btn btn-primary auth-submit-btn"
+            style={{ background: 'linear-gradient(135deg, #2563eb, #1d4ed8)' }}
           >
-            ✨ Create Account
+            Create Candidate Account
           </button>
         </form>
 
         <div className="auth-footer-links">
           <p>
-            Already have an account?{' '}
-            <Link to="/login/student" id="register-to-login-link">Login here →</Link>
+            Already registered? <Link to="/login/student">Log in to Student Portal</Link>
           </p>
         </div>
       </div>

@@ -1,10 +1,11 @@
 /**
  * StudentLogin.jsx
- * Placeholder Student login page with link to registration.
+ * Technical Student Portal Authentication Page.
  */
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { UserCheck, ArrowLeft, Eye, EyeOff, Lock, Building2, UserPlus } from 'lucide-react';
 import { APP_CONFIG } from '../config/app.config';
 import '../styles/Auth.css';
 
@@ -28,8 +29,8 @@ export default function StudentLogin() {
 
   const validate = () => {
     const newErrors = { ...INITIAL_ERRORS };
-    if (!form.email)                    newErrors.email = 'Email is required.';
-    else if (!validateEmail(form.email)) newErrors.email = 'Enter a valid email address.';
+    if (!form.email)                    newErrors.email = 'Student email address is required.';
+    else if (!validateEmail(form.email)) newErrors.email = 'Enter a valid student email address.';
     if (!form.password)                 newErrors.password = 'Password is required.';
     else if (form.password.length < 6)  newErrors.password = 'Password must be at least 6 characters.';
     setErrors(newErrors);
@@ -39,7 +40,7 @@ export default function StudentLogin() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      alert('Student login submitted (backend not yet implemented).');
+      alert('Student credentials submitted for authentication (Backend auth enabled in Module 5).');
     }
   };
 
@@ -47,16 +48,20 @@ export default function StudentLogin() {
     <div className="auth-page" id="student-login-page">
       <div className="auth-card">
 
-        <Link to="/" className="auth-back-link" aria-label="Back to home">
-          ← Back to Home
+        <Link to="/" className="auth-back-link">
+          <ArrowLeft size={16} /> Back to Overview
         </Link>
 
         <div className="auth-card-header">
-          <div className="auth-card-icon student" aria-hidden="true">📚</div>
-          <div className="auth-college-tag">🏛️ {APP_CONFIG.collegeName}</div>
-          <h1 className="auth-card-title">Student Login</h1>
+          <div className="auth-card-icon-badge student">
+            <UserCheck size={26} />
+          </div>
+          <div className="auth-college-tag">
+            <Building2 size={13} /> {APP_CONFIG.collegeName}
+          </div>
+          <h1 className="auth-card-title">Student Career Portal</h1>
           <p className="auth-card-subtitle">
-            Access your dashboard to view drives and manage applications.
+            Log in to view active hiring drives &amp; manage applications
           </p>
         </div>
 
@@ -65,28 +70,21 @@ export default function StudentLogin() {
           className="auth-form"
           onSubmit={handleSubmit}
           noValidate
-          aria-label="Student login form"
         >
           {/* Email */}
           <div className="form-group">
-            <label className="form-label" htmlFor="student-email">Email Address</label>
+            <label className="form-label" htmlFor="student-email">Institutional Email</label>
             <input
               id="student-email"
               name="email"
               type="email"
               className={`form-input${errors.email ? ' error' : ''}`}
-              placeholder="you@college.edu"
+              placeholder="student@xyztech.edu.in"
               value={form.email}
               onChange={handleChange}
               autoComplete="email"
-              aria-describedby={errors.email ? 'student-email-error' : undefined}
-              aria-invalid={!!errors.email}
             />
-            {errors.email && (
-              <span id="student-email-error" className="form-error" role="alert">
-                {errors.email}
-              </span>
-            )}
+            {errors.email && <span className="form-error">{errors.email}</span>}
           </div>
 
           {/* Password */}
@@ -98,12 +96,10 @@ export default function StudentLogin() {
                 name="password"
                 type={showPass ? 'text' : 'password'}
                 className={`form-input${errors.password ? ' error' : ''}`}
-                placeholder="Enter your password"
+                placeholder="••••••••••••"
                 value={form.password}
                 onChange={handleChange}
                 autoComplete="current-password"
-                aria-describedby={errors.password ? 'student-password-error' : undefined}
-                aria-invalid={!!errors.password}
               />
               <button
                 type="button"
@@ -111,37 +107,28 @@ export default function StudentLogin() {
                 onClick={() => setShowPass(p => !p)}
                 aria-label={showPass ? 'Hide password' : 'Show password'}
               >
-                {showPass ? '🙈' : '👁️'}
+                {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-            {errors.password && (
-              <span id="student-password-error" className="form-error" role="alert">
-                {errors.password}
-              </span>
-            )}
+            {errors.password && <span className="form-error">{errors.password}</span>}
           </div>
 
           <button
             id="student-login-submit-btn"
             type="submit"
-            className="auth-submit-btn student"
-            aria-label="Submit student login"
+            className="btn btn-primary auth-submit-btn"
+            style={{ background: 'linear-gradient(135deg, #059669, #047857)' }}
           >
-            📚 Login as Student
+            <Lock size={16} /> Student Login
           </button>
         </form>
 
-        <div className="auth-divider">or</div>
-
         <div className="auth-footer-links">
           <p>
-            New student?{' '}
-            <Link to="/register/student" id="student-register-link">
-              Create an account →
+            First time user?{' '}
+            <Link to="/register/student" id="student-register-link" style={{ color: 'var(--color-primary-light)', fontWeight: 600 }}>
+              Register Candidate Account <UserPlus size={13} style={{ verticalAlign: 'middle' }} />
             </Link>
-          </p>
-          <p style={{ marginTop: '0.5rem' }}>
-            <Link to="/" id="student-go-home-link">← Back to home</Link>
           </p>
         </div>
 

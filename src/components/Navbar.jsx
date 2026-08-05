@@ -1,38 +1,38 @@
 /**
  * Navbar.jsx
- * Fixed top navigation bar with:
- * - College name from config
- * - Smooth scroll nav links
- * - Scroll-shadow effect
- * - Dark/light toggle
- * - Mobile hamburger menu
+ * Professional Header Navigation with:
+ * - Enterprise institution branding
+ * - Lucide vector icons
+ * - Portal portal indicator
+ * - Smooth anchor navigation
+ * - Responsive mobile drawer
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { GraduationCap, Menu, X, Shield, ChevronRight } from 'lucide-react';
 import { APP_CONFIG, SITE_TITLE } from '../config/app.config';
 import ThemeToggle from './ThemeToggle';
 import '../styles/Navbar.css';
 
 const NAV_LINKS = [
-  { label: 'Home',      href: '#hero' },
-  { label: 'About PMS', href: '#about-system' },
-  { label: 'Developer', href: '#about-developer' },
-  { label: 'Contact',   href: '#footer' },
+  { label: 'Overview',   href: '#hero' },
+  { label: 'Portals',    href: '#login-portals' },
+  { label: 'Workflow',   href: '#about-system' },
+  { label: 'Recruiters', href: '#recruiters' },
+  { label: 'Developer',  href: '#about-developer' },
 ];
 
 export default function Navbar({ isDark, onToggleTheme }) {
-  const [scrolled, setScrolled]     = useState(false);
-  const [menuOpen, setMenuOpen]     = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  // Add shadow when page is scrolled
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close menu on resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768) setMenuOpen(false);
@@ -49,8 +49,6 @@ export default function Navbar({ isDark, onToggleTheme }) {
     }
   }, []);
 
-  const shortName = APP_CONFIG.collegeShortName;
-
   return (
     <>
       <nav
@@ -60,18 +58,20 @@ export default function Navbar({ isDark, onToggleTheme }) {
         aria-label="Main navigation"
       >
         <div className="container navbar-inner">
-          {/* Logo */}
+          {/* Institution Logo & Title */}
           <Link to="/" className="navbar-logo" aria-label={SITE_TITLE}>
-            <div className="navbar-logo-icon" aria-hidden="true">
-              {shortName.slice(0, 2).toUpperCase()}
+            <div className="navbar-logo-icon">
+              <GraduationCap size={22} strokeWidth={2.2} />
             </div>
             <div className="navbar-logo-text">
               <span className="navbar-logo-title">{APP_CONFIG.collegeName}</span>
-              <span className="navbar-logo-subtitle">{APP_CONFIG.appName}</span>
+              <span className="navbar-logo-subtitle">
+                Training &amp; Placement Cell • <span className="version-tag">{APP_CONFIG.appShortName}</span>
+              </span>
             </div>
           </Link>
 
-          {/* Desktop Nav Links */}
+          {/* Desktop Links */}
           <ul className="navbar-links" role="list">
             {NAV_LINKS.map(link => (
               <li key={link.label}>
@@ -85,30 +85,28 @@ export default function Navbar({ isDark, onToggleTheme }) {
             ))}
           </ul>
 
-          {/* Desktop Actions */}
+          {/* Right Header Actions */}
           <div className="navbar-actions">
             <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
             <Link to="/login/student" className="btn btn-primary btn-sm" id="nav-student-login-btn">
-              Student Login
+              Student Portal <ChevronRight size={14} />
             </Link>
           </div>
 
-          {/* Mobile Hamburger */}
+          {/* Mobile Hamburger Toggle */}
           <button
             id="navbar-hamburger-btn"
-            className={`navbar-hamburger${menuOpen ? ' open' : ''}`}
+            className="navbar-hamburger"
             onClick={() => setMenuOpen(prev => !prev)}
-            aria-label="Toggle mobile menu"
+            aria-label="Toggle navigation menu"
             aria-expanded={menuOpen}
           >
-            <span className="hamburger-line" />
-            <span className="hamburger-line" />
-            <span className="hamburger-line" />
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Navigation Menu */}
       <div
         id="navbar-mobile-menu"
         className={`navbar-mobile-menu${menuOpen ? ' open' : ''}`}
@@ -131,6 +129,7 @@ export default function Navbar({ isDark, onToggleTheme }) {
           <Link
             to="/login/student"
             className="btn btn-primary btn-sm"
+            style={{ width: '100%' }}
             onClick={() => setMenuOpen(false)}
             id="mobile-student-login-btn"
           >

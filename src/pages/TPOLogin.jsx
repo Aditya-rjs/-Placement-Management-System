@@ -1,10 +1,11 @@
 /**
  * TPOLogin.jsx
- * Placeholder TPO Representative login page.
+ * Technical TPO Portal Authentication Page.
  */
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { GraduationCap, ArrowLeft, Eye, EyeOff, Lock, Building2 } from 'lucide-react';
 import { APP_CONFIG } from '../config/app.config';
 import '../styles/Auth.css';
 
@@ -28,8 +29,8 @@ export default function TPOLogin() {
 
   const validate = () => {
     const newErrors = { ...INITIAL_ERRORS };
-    if (!form.email)                    newErrors.email = 'Email is required.';
-    else if (!validateEmail(form.email)) newErrors.email = 'Enter a valid email address.';
+    if (!form.email)                    newErrors.email = 'TPO Officer email is required.';
+    else if (!validateEmail(form.email)) newErrors.email = 'Enter a valid institutional email.';
     if (!form.password)                 newErrors.password = 'Password is required.';
     else if (form.password.length < 6)  newErrors.password = 'Password must be at least 6 characters.';
     setErrors(newErrors);
@@ -39,7 +40,7 @@ export default function TPOLogin() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      alert('TPO login submitted (backend not yet implemented).');
+      alert('TPO Officer credentials submitted for verification (Backend auth enabled in Module 5).');
     }
   };
 
@@ -47,16 +48,20 @@ export default function TPOLogin() {
     <div className="auth-page" id="tpo-login-page">
       <div className="auth-card">
 
-        <Link to="/" className="auth-back-link" aria-label="Back to home">
-          ← Back to Home
+        <Link to="/" className="auth-back-link">
+          <ArrowLeft size={16} /> Back to Overview
         </Link>
 
         <div className="auth-card-header">
-          <div className="auth-card-icon tpo" aria-hidden="true">🎓</div>
-          <div className="auth-college-tag">🏛️ {APP_CONFIG.collegeName}</div>
-          <h1 className="auth-card-title">TPO Login</h1>
+          <div className="auth-card-icon-badge tpo">
+            <GraduationCap size={26} />
+          </div>
+          <div className="auth-college-tag">
+            <Building2 size={13} /> {APP_CONFIG.collegeName}
+          </div>
+          <h1 className="auth-card-title">TPO Officer Portal</h1>
           <p className="auth-card-subtitle">
-            Training &amp; Placement Officer portal. Manage drives and student data.
+            Training &amp; Placement Office Management Console
           </p>
         </div>
 
@@ -65,28 +70,21 @@ export default function TPOLogin() {
           className="auth-form"
           onSubmit={handleSubmit}
           noValidate
-          aria-label="TPO login form"
         >
           {/* Email */}
           <div className="form-group">
-            <label className="form-label" htmlFor="tpo-email">Email Address</label>
+            <label className="form-label" htmlFor="tpo-email">Officer Email</label>
             <input
               id="tpo-email"
               name="email"
               type="email"
               className={`form-input${errors.email ? ' error' : ''}`}
-              placeholder="tpo@college.edu"
+              placeholder="tpo@xyztech.edu.in"
               value={form.email}
               onChange={handleChange}
               autoComplete="email"
-              aria-describedby={errors.email ? 'tpo-email-error' : undefined}
-              aria-invalid={!!errors.email}
             />
-            {errors.email && (
-              <span id="tpo-email-error" className="form-error" role="alert">
-                {errors.email}
-              </span>
-            )}
+            {errors.email && <span className="form-error">{errors.email}</span>}
           </div>
 
           {/* Password */}
@@ -98,12 +96,10 @@ export default function TPOLogin() {
                 name="password"
                 type={showPass ? 'text' : 'password'}
                 className={`form-input${errors.password ? ' error' : ''}`}
-                placeholder="Enter your password"
+                placeholder="••••••••••••"
                 value={form.password}
                 onChange={handleChange}
                 autoComplete="current-password"
-                aria-describedby={errors.password ? 'tpo-password-error' : undefined}
-                aria-invalid={!!errors.password}
               />
               <button
                 type="button"
@@ -111,30 +107,25 @@ export default function TPOLogin() {
                 onClick={() => setShowPass(p => !p)}
                 aria-label={showPass ? 'Hide password' : 'Show password'}
               >
-                {showPass ? '🙈' : '👁️'}
+                {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-            {errors.password && (
-              <span id="tpo-password-error" className="form-error" role="alert">
-                {errors.password}
-              </span>
-            )}
+            {errors.password && <span className="form-error">{errors.password}</span>}
           </div>
 
           <button
             id="tpo-login-submit-btn"
             type="submit"
-            className="auth-submit-btn tpo"
-            aria-label="Submit TPO login"
+            className="btn btn-primary auth-submit-btn"
+            style={{ background: 'linear-gradient(135deg, #0284c7, #0369a1)' }}
           >
-            🎓 Login as TPO
+            <Lock size={16} /> Authenticate TPO Account
           </button>
         </form>
 
         <div className="auth-footer-links">
           <p>
-            Not the right portal?{' '}
-            <Link to="/" id="tpo-go-home-link">Go back home</Link>
+            Training &amp; Placement Officer access only. <Link to="/">Back to main page</Link>
           </p>
         </div>
       </div>

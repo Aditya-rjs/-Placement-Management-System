@@ -1,9 +1,11 @@
 /**
  * ThemeToggle.jsx
  * Animated Sun / Moon toggle button for light/dark mode.
+ * Uses Lucide vector icons for a clean, technical UI.
  */
 
 import React from 'react';
+import { Sun, Moon } from 'lucide-react';
 
 export default function ThemeToggle({ isDark, onToggle }) {
   return (
@@ -13,42 +15,33 @@ export default function ThemeToggle({ isDark, onToggle }) {
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       style={{
-        width: '40px',
-        height: '40px',
+        width: '36px',
+        height: '36px',
         borderRadius: 'var(--radius-md)',
-        background: 'var(--color-surface)',
-        border: '1px solid var(--color-border-subtle)',
+        background: 'var(--color-bg)',
+        border: '1px solid var(--color-border)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         cursor: 'pointer',
-        fontSize: '1.1rem',
-        transition: 'all var(--transition-base)',
         color: 'var(--color-text-secondary)',
+        transition: 'all var(--transition-fast)',
         flexShrink: 0,
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.background = 'rgba(99,102,241,0.15)';
         e.currentTarget.style.borderColor = 'var(--color-primary)';
-        e.currentTarget.style.color = 'var(--color-primary-light)';
-        e.currentTarget.style.transform = 'scale(1.05)';
+        e.currentTarget.style.color = 'var(--color-text)';
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.background = 'var(--color-surface)';
-        e.currentTarget.style.borderColor = 'var(--color-border-subtle)';
+        e.currentTarget.style.borderColor = 'var(--color-border)';
         e.currentTarget.style.color = 'var(--color-text-secondary)';
-        e.currentTarget.style.transform = 'scale(1)';
       }}
     >
-      <span
-        style={{
-          display: 'inline-block',
-          transition: 'transform 0.4s ease, opacity 0.3s ease',
-          transform: isDark ? 'rotate(0deg)' : 'rotate(180deg)',
-        }}
-      >
-        {isDark ? '🌙' : '☀️'}
-      </span>
+      {isDark ? (
+        <Sun size={18} strokeWidth={2} />
+      ) : (
+        <Moon size={18} strokeWidth={2} />
+      )}
     </button>
   );
 }

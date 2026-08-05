@@ -1,46 +1,63 @@
 /**
  * Home.jsx
- * Landing page — the entry point of the PMS application.
- *
- * Sections:
- *  1. Hero (headline + 3 login cards + stats)
- *  2. About System (4-card grid)
- *  3. About Developer (profile card)
- *  4. Footer (via component)
+ * Landing page for the Placement Management System.
+ * Styled as an authentic University Enterprise Application built by a Final-Year CS Student.
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  Shield,
+  GraduationCap,
+  UserCheck,
+  Building2,
+  CheckCircle2,
+  ArrowRight,
+  Code2,
+  Terminal,
+  Mail,
+  FileCheck2,
+  BarChart3,
+  Cpu,
+  Database
+} from 'lucide-react';
+import { GithubIcon, LinkedinIcon } from '../components/SocialIcons';
 import { APP_CONFIG, SITE_TITLE } from '../config/app.config';
 import '../styles/Home.css';
 
-// ─── Data ──────────────────────────────────────────────────────────────────
+// ─── Data Configurations ───────────────────────────────────────────────────
 
-const LOGIN_CARDS = [
+const LOGIN_PORTALS = [
   {
     id: 'admin',
-    icon: '🛡️',
-    title: 'Admin Login',
-    desc: 'Manage the entire system, users, and placement data.',
-    btnLabel: 'Login as Admin',
+    icon: Shield,
+    title: 'Admin Control Center',
+    subtitle: 'System Administrators',
+    desc: 'Complete control over system parameters, user roles, security audits, and database maintenance.',
+    features: ['User Role Management', 'Global System Config', 'Audit Logs & Backup'],
+    btnLabel: 'Access Admin Portal',
     route: '/login/admin',
     variant: 'admin',
   },
   {
     id: 'tpo',
-    icon: '🎓',
-    title: 'TPO Login',
-    desc: 'Coordinate placements, companies, and student drives.',
-    btnLabel: 'Login as TPO',
+    icon: GraduationCap,
+    title: 'TPO Representative Portal',
+    subtitle: 'Training & Placement Office',
+    desc: 'Manage corporate partners, post job drives, run eligibility filters, and track placement statistics.',
+    features: ['Drive Scheduling', 'Automated Shortlisting', 'Placement Analytics'],
+    btnLabel: 'Access TPO Portal',
     route: '/login/tpo',
     variant: 'tpo',
   },
   {
     id: 'student',
-    icon: '📚',
-    title: 'Student Login',
-    desc: 'View drives, apply for placements, and track status.',
-    btnLabel: 'Login as Student',
+    icon: UserCheck,
+    title: 'Student Career Portal',
+    subtitle: 'Enrolled Undergraduates',
+    desc: 'Browse eligible campus drives, apply with one click, upload resumes, and monitor application status.',
+    features: ['Active Drive Application', 'Resume & Profile Vault', 'Real-time Status Feed'],
+    btnLabel: 'Access Student Portal',
     route: '/login/student',
     variant: 'student',
     hasRegister: true,
@@ -48,305 +65,286 @@ const LOGIN_CARDS = [
   },
 ];
 
-const ABOUT_CARDS = [
+const SYSTEM_HIGHLIGHTS = [
   {
-    icon: '🏫',
-    title: 'What is PMS?',
-    text: `The ${APP_CONFIG.appName} is a centralised digital platform that streamlines 
-           all campus placement activities — from student registration and company 
-           onboarding to offer letter management.`,
+    icon: Cpu,
+    title: 'Automated Eligibility Engine',
+    desc: 'Instantly filters eligible candidates based on CPI thresholds, active backlog constraints, branch criteria, and graduation batch.',
   },
   {
-    icon: '⚙️',
-    title: 'What Does It Do?',
-    text: `PMS automates the end-to-end placement workflow: managing job drives, 
-           eligibility checks, scheduling interviews, tracking application statuses, 
-           and generating placement reports for the institution.`,
+    icon: FileCheck2,
+    title: 'Real-time Application Tracker',
+    desc: 'Live tracking of recruitment stages: Written Tests, Technical Interviews, HR rounds, and Final Offer Letter distribution.',
   },
   {
-    icon: '🎯',
-    title: 'How It Helps Students',
-    text: `Students get a single portal to discover job drives, check eligibility, 
-           submit applications, and receive real-time updates on their placement 
-           status — eliminating paperwork and confusion.`,
+    icon: Database,
+    title: 'Centralized Candidate Vault',
+    desc: 'Secure repository for student academic transcripts, verified resumes, certifications, and identity documentation.',
   },
   {
-    icon: '🏢',
-    title: 'How It Helps TPO',
-    text: `The Training & Placement Office gains powerful tools to manage recruiters, 
-           schedule campus events, filter eligible students, and produce insightful 
-           placement analytics with just a few clicks.`,
+    icon: BarChart3,
+    title: 'TPO Analytics & Reporting',
+    desc: 'Exportable placement reports, branch-wise placement percentages, salary distribution charts, and company visit history.',
   },
 ];
 
-const STATS = [
-  { value: '500+', label: 'Students Placed' },
-  { value: '80+',  label: 'Companies Visited' },
-  { value: '95%',  label: 'Placement Rate' },
-  { value: '24/7', label: 'System Available' },
-];
+// ─── Sub-Components ────────────────────────────────────────────────────────
 
-// ─── LoginCard sub-component ────────────────────────────────────────────────
+function PortalCard({ portal, onLogin, onRegister }) {
+  const IconComponent = portal.icon;
 
-function LoginCard({ card, onLogin, onRegister }) {
   return (
-    <div
-      className={`login-card ${card.variant}`}
-      id={`login-card-${card.id}`}
-      role="article"
-      aria-label={card.title}
-    >
-      <div className={`login-card-icon`} aria-hidden="true">
-        {card.icon}
+    <div className={`portal-card ${portal.variant}`} id={`portal-card-${portal.id}`}>
+      <div className="portal-card-header">
+        <div className="portal-card-icon-wrapper">
+          <IconComponent size={24} strokeWidth={2} />
+        </div>
+        <div>
+          <span className="portal-card-subtitle">{portal.subtitle}</span>
+          <h3 className="portal-card-title">{portal.title}</h3>
+        </div>
       </div>
-      <h3 className="login-card-title">{card.title}</h3>
-      <p className="login-card-desc">{card.desc}</p>
-      <button
-        id={`${card.id}-login-btn`}
-        className={`btn login-card-btn`}
-        onClick={() => onLogin(card.route)}
-        aria-label={card.btnLabel}
-      >
-        {card.btnLabel}
-      </button>
-      {card.hasRegister && (
+
+      <p className="portal-card-desc">{portal.desc}</p>
+
+      <ul className="portal-card-features">
+        {portal.features.map(feat => (
+          <li key={feat}>
+            <CheckCircle2 size={15} className="feature-check-icon" />
+            <span>{feat}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="portal-card-actions">
         <button
-          id="student-register-btn"
-          style={{
-            marginTop: '0.75rem',
-            width: '100%',
-            background: 'transparent',
-            border: '1.5px solid rgba(16,185,129,0.4)',
-            color: 'var(--color-success)',
-            borderRadius: 'var(--radius-full)',
-            padding: '0.6rem',
-            fontSize: 'var(--font-size-sm)',
-            fontWeight: 600,
-            cursor: 'pointer',
-            transition: 'all var(--transition-base)',
-            fontFamily: 'var(--font-primary)',
-          }}
-          onClick={() => onRegister(card.registerRoute)}
-          onMouseEnter={e => {
-            e.currentTarget.style.background = 'rgba(16,185,129,0.12)';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background = 'transparent';
-          }}
-          aria-label="Register as Student"
+          id={`${portal.id}-login-btn`}
+          className="btn btn-primary portal-btn"
+          onClick={() => onLogin(portal.route)}
         >
-          ✨ New Student? Register
+          <span>{portal.btnLabel}</span>
+          <ArrowRight size={16} />
         </button>
-      )}
+
+        {portal.hasRegister && (
+          <button
+            id="student-register-btn"
+            className="btn btn-outline portal-btn-secondary"
+            onClick={() => onRegister(portal.registerRoute)}
+          >
+            <span>New Student? Register Account</span>
+          </button>
+        )}
+      </div>
     </div>
   );
 }
-
-// ─── DeveloperCard sub-component ────────────────────────────────────────────
 
 function DeveloperCard() {
   const dev = APP_CONFIG.developer;
 
   return (
-    <div className="developer-card" role="article" aria-label="About the Developer">
-      {/* Photo Column */}
-      <div className="developer-photo-col">
-        {dev.photoUrl ? (
-          <img
-            src={dev.photoUrl}
-            alt={`${dev.name} — Developer`}
-            className="developer-avatar"
-          />
-        ) : (
-          <div className="developer-avatar-placeholder" aria-hidden="true">
-            👨‍💻
+    <div className="developer-card" id="developer-card">
+      <div className="developer-header">
+        <div className="developer-avatar-wrapper">
+          {dev.photoUrl ? (
+            <img src={dev.photoUrl} alt={dev.name} className="developer-avatar" />
+          ) : (
+            <div className="developer-avatar-fallback">
+              <Terminal size={36} strokeWidth={1.8} />
+            </div>
+          )}
+          <span className="developer-status-dot" title="Available for engineering opportunities" />
+        </div>
+
+        <div className="developer-title-group">
+          <div className="developer-badge">
+            <Code2 size={14} /> Capstone Engineering Project
           </div>
-        )}
-        <div className="developer-social-links" aria-label="Developer social links">
-          <a
-            href={dev.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="developer-social-btn"
-            title="GitHub Profile"
-            aria-label="GitHub"
-          >🐙</a>
-          <a
-            href={dev.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="developer-social-btn"
-            title="LinkedIn Profile"
-            aria-label="LinkedIn"
-          >💼</a>
-          <a
-            href={`mailto:${dev.email}`}
-            className="developer-social-btn"
-            title="Send Email"
-            aria-label="Email"
-          >✉️</a>
+          <h3 className="developer-name">{dev.name}</h3>
+          <p className="developer-role">{dev.title}</p>
+          <p className="developer-institution">
+            {dev.college} • <span className="mono-badge">Reg: {dev.regNo}</span>
+          </p>
+        </div>
+
+        <div className="developer-links">
+          {dev.github && (
+            <a href={dev.github} target="_blank" rel="noopener noreferrer" className="dev-social-link" title="GitHub Repository">
+              <GithubIcon size={18} />
+            </a>
+          )}
+          {dev.linkedin && (
+            <a href={dev.linkedin} target="_blank" rel="noopener noreferrer" className="dev-social-link" title="LinkedIn Profile">
+              <LinkedinIcon size={18} />
+            </a>
+          )}
+          {dev.email && (
+            <a href={`mailto:${dev.email}`} className="dev-social-link" title="Contact Email">
+              <Mail size={18} />
+            </a>
+          )}
         </div>
       </div>
 
-      {/* Info Column */}
-      <div className="developer-info-col">
-        <h3 className="developer-name">{dev.name}</h3>
-        <p className="developer-title">{dev.title}</p>
+      <div className="developer-body">
+        <p className="developer-bio">{dev.bio}</p>
 
-        <div className="developer-meta">
-          <span className="developer-meta-item">🏛️ {dev.college}</span>
-          <span className="developer-meta-item">🎓 {dev.branch}</span>
-          <span className="developer-meta-item">📅 Batch {dev.batch}</span>
-        </div>
-
-        <blockquote className="developer-bio">
-          "{dev.bio.trim()}"
-        </blockquote>
-
-        <p className="developer-skills-label">Tech Stack &amp; Skills</p>
-        <div className="developer-skills" role="list" aria-label="Developer skills">
-          {dev.skills.map(skill => (
-            <span key={skill} className="skill-tag" role="listitem">{skill}</span>
-          ))}
+        <div className="developer-skills-section">
+          <span className="developer-skills-title">Technical Skills &amp; Stack</span>
+          <div className="developer-skills-grid">
+            {dev.skills.map(skill => (
+              <span key={skill} className="skill-chip">{skill}</span>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-// ─── Main Home Component ─────────────────────────────────────────────────────
+// ─── Main Component ────────────────────────────────────────────────────────
 
 export default function Home() {
   const navigate = useNavigate();
-  const heroRef  = useRef(null);
 
-  // Intersection Observer for staggered entrance animations
   useEffect(() => {
-    const sections = document.querySelectorAll('.animate-on-scroll');
-    if (!window.IntersectionObserver) return;
-
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    sections.forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(30px)';
-      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      observer.observe(el);
-    });
-
-    return () => observer.disconnect();
+    document.title = SITE_TITLE;
   }, []);
 
-  const handleLogin   = (route) => navigate(route);
+  const handleLogin = (route) => navigate(route);
   const handleRegister = (route) => navigate(route);
 
   return (
-    <main id="main-content" role="main">
+    <main id="main-content" className="home-page" role="main">
 
-      {/* ══ HERO ═══════════════════════════════════════════════════════════ */}
-      <section id="hero" className="hero" ref={heroRef} aria-label="Hero section">
-        <div className="container hero-content">
+      {/* ══ HERO SECTION ════════════════════════════════════════════════════ */}
+      <section id="hero" className="hero-section">
+        <div className="container">
+          <div className="hero-content">
 
-          <div className="hero-badge" role="status">
-            <span className="hero-badge-dot" aria-hidden="true" />
-            System Online &amp; Active
+            {/* Official Badge */}
+            <div className="hero-official-badge">
+              <span className="badge-pulse" />
+              <span>OFFICIAL PORTAL • ACADEMIC SESSION 2024-25</span>
+            </div>
+
+            <h1 className="hero-title">
+              <span className="hero-institution-name">{APP_CONFIG.collegeName}</span>
+              <br />
+              Placement Management System
+            </h1>
+
+            <p className="hero-description">
+              {APP_CONFIG.appTagline}
+            </p>
+
+            {/* Key Metrics Strip */}
+            <div className="hero-metrics-strip">
+              {APP_CONFIG.stats.map(stat => (
+                <div key={stat.label} className="metric-box">
+                  <span className="metric-value">{stat.value}</span>
+                  <span className="metric-label">{stat.label}</span>
+                  <span className="metric-highlight">{stat.highlight}</span>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ══ PORTALS SELECTION SECTION ═══════════════════════════════════════ */}
+      <section id="login-portals" className="section portals-section">
+        <div className="container">
+          <div className="section-header">
+            <span className="section-tag">Role-Based Access</span>
+            <h2 className="section-title">Select Authentication Portal</h2>
+            <p className="section-subtitle">
+              Choose your authorized user category to log into the Placement Management System.
+            </p>
           </div>
 
-          <h1 className="hero-heading">
-            <span className="hero-heading-gradient">{APP_CONFIG.collegeName}</span>
-            <br />
-            {APP_CONFIG.appName}
-          </h1>
-
-          <p className="hero-subheading">
-            {APP_CONFIG.appTagline}
-          </p>
-
-          {/* Login Cards */}
-          <div
-            className="hero-login-grid"
-            role="region"
-            aria-label="Login options"
-          >
-            {LOGIN_CARDS.map(card => (
-              <LoginCard
-                key={card.id}
-                card={card}
+          <div className="portals-grid">
+            {LOGIN_PORTALS.map(portal => (
+              <PortalCard
+                key={portal.id}
+                portal={portal}
                 onLogin={handleLogin}
                 onRegister={handleRegister}
               />
             ))}
           </div>
+        </div>
+      </section>
 
-          {/* Stats */}
-          <div className="hero-stats" role="region" aria-label="Placement statistics">
-            {STATS.map(stat => (
-              <div key={stat.label} className="hero-stat">
-                <span className="hero-stat-value">{stat.value}</span>
-                <span className="hero-stat-label">{stat.label}</span>
+      {/* ══ TOP RECRUITERS SHOWCASE ═════════════════════════════════════════ */}
+      <section id="recruiters" className="section recruiters-section">
+        <div className="container">
+          <div className="section-header">
+            <span className="section-tag">Corporate Connections</span>
+            <h2 className="section-title">Top Recruiting Partners</h2>
+            <p className="section-subtitle">
+              Leading multinational corporations and technology innovators hiring from our campus.
+            </p>
+          </div>
+
+          <div className="recruiters-grid">
+            {APP_CONFIG.recruiters.map(recruiter => (
+              <div key={recruiter.name} className="recruiter-card">
+                <div className="recruiter-icon">
+                  <Building2 size={20} />
+                </div>
+                <div className="recruiter-info">
+                  <h4 className="recruiter-name">{recruiter.name}</h4>
+                  <span className="recruiter-cat">{recruiter.category}</span>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══ ABOUT SYSTEM ════════════════════════════════════════════════════ */}
-      <section
-        id="about-system"
-        className="about-system section"
-        aria-label="About the Placement Management System"
-      >
+      {/* ══ SYSTEM ARCHITECTURE & WORKFLOW ══════════════════════════════════ */}
+      <section id="about-system" className="section system-section">
         <div className="container">
-          <h2 className="section-title animate-on-scroll">About the System</h2>
-          <p className="section-subtitle animate-on-scroll">
-            Everything you need to know about the {APP_CONFIG.appName} — 
-            built to simplify and modernise campus placements.
-          </p>
+          <div className="section-header">
+            <span className="section-tag">System Capabilities</span>
+            <h2 className="section-title">Engineering Highlights &amp; Workflow</h2>
+            <p className="section-subtitle">
+              Built to eliminate manual paperwork, enforce eligibility compliance, and streamline hiring drives.
+            </p>
+          </div>
 
-          <div className="about-grid">
-            {ABOUT_CARDS.map((card, i) => (
-              <div
-                key={card.title}
-                className="about-card animate-on-scroll"
-                id={`about-card-${i + 1}`}
-                role="article"
-                style={{ transitionDelay: `${i * 0.1}s` }}
-              >
-                <div className="about-card-icon" aria-hidden="true">{card.icon}</div>
-                <h3 className="about-card-title">{card.title}</h3>
-                <p className="about-card-text">{card.text}</p>
-              </div>
-            ))}
+          <div className="highlights-grid">
+            {SYSTEM_HIGHLIGHTS.map(item => {
+              const IconComp = item.icon;
+              return (
+                <div key={item.title} className="highlight-card">
+                  <div className="highlight-icon">
+                    <IconComp size={24} strokeWidth={2} />
+                  </div>
+                  <h3 className="highlight-title">{item.title}</h3>
+                  <p className="highlight-desc">{item.desc}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* ══ ABOUT DEVELOPER ══════════════════════════════════════════════════ */}
-      <section
-        id="about-developer"
-        className="about-developer section"
-        aria-label="About the Developer"
-      >
+      <section id="about-developer" className="section developer-section">
         <div className="container">
-          <h2 className="section-title animate-on-scroll">About the Developer</h2>
-          <p className="section-subtitle animate-on-scroll">
-            The mind behind the {APP_CONFIG.appShortName} — passionate about technology 
-            and building products that matter.
-          </p>
-          <div className="animate-on-scroll">
-            <DeveloperCard />
+          <div className="section-header">
+            <span className="section-tag">Capstone Engineering Project</span>
+            <h2 className="section-title">About the Developer</h2>
+            <p className="section-subtitle">
+              Designed and engineered as a final-year B.Tech Computer Science capstone application.
+            </p>
           </div>
+
+          <DeveloperCard />
         </div>
       </section>
 
