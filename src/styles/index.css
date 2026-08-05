@@ -1,16 +1,16 @@
 /* ═══════════════════════════════════════════════════════════
-   index.css — Professional Technical Portal Design Tokens
-   Placement Management System (B.Tech Capstone Standard)
+   index.css — High-Contrast Enterprise Design Tokens
+   Placement Management System (Dark & Light Mode Calibrated)
    ═══════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Dark Mode Palette (Slate & Blue Accent — B.Tech / EdTech Standard) */
+  /* Dark Mode Palette (Default) */
   --color-primary:        #2563eb;
   --color-primary-hover:  #1d4ed8;
   --color-primary-light:  #60a5fa;
-  --color-primary-subtle: rgba(37, 99, 235, 0.12);
+  --color-primary-subtle: rgba(37, 99, 235, 0.15);
   --color-secondary:      #0ea5e9;
   --color-accent:         #f59e0b;
   --color-success:        #10b981;
@@ -30,13 +30,11 @@
   --color-text:           #f8fafc;
   --color-text-secondary: #94a3b8;
   --color-text-muted:     #64748b;
-  --color-text-inverse:   #0f172a;
+  --color-heading-gradient: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
 
   /* Gradients */
   --gradient-primary:     linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   --gradient-hero:        radial-gradient(ellipse at 50% -20%, #1e293b 0%, #0b0f19 80%);
-  --gradient-card:        linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
-  --gradient-badge:       linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.1));
 
   /* Shadows */
   --shadow-sm:    0 1px 2px rgba(0,0,0,0.3);
@@ -58,8 +56,6 @@
   --font-size-xl:   1.25rem;
   --font-size-2xl:  1.5rem;
   --font-size-3xl:  1.875rem;
-  --font-size-4xl:  2.25rem;
-  --font-size-5xl:  3rem;
 
   /* Spacing */
   --space-1:  0.25rem;
@@ -68,9 +64,9 @@
   --space-4:  1rem;
   --space-6:  1.5rem;
   --space-8:  2rem;
+  --space-10: 2.5rem;
   --space-12: 3rem;
   --space-16: 4rem;
-  --space-20: 5rem;
 
   /* Border Radius */
   --radius-sm:   0.375rem;
@@ -87,29 +83,34 @@
   --navbar-height: 72px;
 }
 
-/* ── Light Mode Palette Overrides ────────────────────────── */
+/* ── Light Mode Calibrated Tokens (High Contrast) ────────── */
 [data-theme="light"] {
+  --color-primary:        #2563eb;
+  --color-primary-hover:  #1d4ed8;
+  --color-primary-light:  #1d4ed8;
+  --color-primary-subtle: rgba(37, 99, 235, 0.08);
+
   --color-bg:             #f8fafc;
-  --color-bg-secondary:   #ffffff;
+  --color-bg-secondary:   #f1f5f9;
   --color-bg-card:        #ffffff;
-  --color-bg-card-hover:  #f1f5f9;
+  --color-bg-card-hover:  #f8fafc;
   --color-surface:        #e2e8f0;
   --color-border:         #cbd5e1;
   --color-border-subtle:  #e2e8f0;
-  --color-border-active:  #3b82f6;
+  --color-border-active:  #2563eb;
 
   --color-text:           #0f172a;
-  --color-text-secondary: #475569;
+  --color-text-secondary: #334155;
   --color-text-muted:     #64748b;
-  --color-text-inverse:   #ffffff;
+  --color-heading-gradient: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
 
-  --gradient-hero:        radial-gradient(ellipse at 50% -20%, #eff6ff 0%, #f8fafc 80%);
-  --gradient-card:        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  --gradient-hero:        radial-gradient(ellipse at 50% -20%, #e0f2fe 0%, #f8fafc 80%);
+
   --shadow-sm:    0 1px 3px rgba(0,0,0,0.06);
   --shadow-md:    0 4px 12px rgba(0,0,0,0.08);
   --shadow-lg:    0 12px 32px rgba(0,0,0,0.1);
-  --shadow-glow:  0 0 25px rgba(37, 99, 235, 0.12);
-  --shadow-card:  0 2px 10px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  --shadow-glow:  0 0 25px rgba(37, 99, 235, 0.15);
+  --shadow-card:  0 2px 12px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.05);
 }
 
 /* ── Base Styles ─────────────────────────────────────────── */
@@ -152,14 +153,12 @@ h1, h2, h3, h4, h5, h6 {
 p { color: var(--color-text-secondary); }
 
 a {
-  color: var(--color-primary-light);
+  color: var(--color-primary);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
-a:hover { color: var(--color-primary); }
-
-img { max-width: 100%; display: block; }
+a:hover { color: var(--color-primary-hover); }
 
 button {
   font-family: var(--font-primary);
@@ -178,7 +177,7 @@ button {
 }
 
 .section {
-  padding: var(--space-20) 0;
+  padding: var(--space-16) 0;
 }
 
 .section-tag {
@@ -191,7 +190,7 @@ button {
   border-radius: var(--radius-full);
   font-size: var(--font-size-xs);
   font-weight: 600;
-  color: var(--color-primary-light);
+  color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: var(--space-4);
@@ -215,7 +214,7 @@ button {
   line-height: 1.6;
 }
 
-/* ── Button Design System ────────────────────────────────── */
+/* ── Buttons ─────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -233,7 +232,7 @@ button {
 
 .btn-primary {
   background: var(--color-primary);
-  color: #ffffff;
+  color: #ffffff !important;
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
 }
 
@@ -244,26 +243,15 @@ button {
 }
 
 .btn-outline {
-  background: transparent;
-  color: var(--color-text);
+  background: var(--color-bg-card);
+  color: var(--color-text) !important;
   border: 1px solid var(--color-border);
 }
 
 .btn-outline:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--color-primary-light);
-  color: var(--color-primary-light);
-}
-
-.btn-secondary {
   background: var(--color-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-border-subtle);
-}
-
-.btn-secondary:hover {
-  background: var(--color-bg-card-hover);
-  border-color: var(--color-border);
+  border-color: var(--color-primary);
+  color: var(--color-primary) !important;
 }
 
 .btn-sm {
@@ -278,7 +266,7 @@ button {
   border-radius: var(--radius-lg);
 }
 
-/* ── Technical Form Inputs ───────────────────────────────── */
+/* ── Form Inputs ─────────────────────────────────────────── */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -325,18 +313,18 @@ button {
   font-weight: 500;
 }
 
-/* ── Code / Monospace Badge ──────────────────────────────── */
+/* ── Monospace Badge ─────────────────────────────────────── */
 .mono-badge {
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
   padding: 0.2rem 0.5rem;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
 }
 
-/* ── Scroll Padding & Custom Scrollbar ───────────────────── */
+/* ── Scroll Padding & Scrollbar ──────────────────────────── */
 [id] { scroll-margin-top: calc(var(--navbar-height) + 1rem); }
 
 ::-webkit-scrollbar { width: 8px; }
@@ -345,12 +333,3 @@ button {
   background: var(--color-surface);
   border-radius: var(--radius-full);
 }
-::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
-
-/* ── Animations ──────────────────────────────────────────── */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
