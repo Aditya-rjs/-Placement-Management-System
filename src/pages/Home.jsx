@@ -61,7 +61,8 @@ const LOGIN_PORTALS = [
     desc: 'Complete control over institutional parameters, global user roles, enterprise security policies, and database backups.',
     features: ['Role-Based Permission Matrix', 'Audit Trail & Compliance Logs', 'System-wide Database Backups'],
     btnLabel: 'Launch Admin Portal',
-    route: '/login/admin',
+    portal: 'admin',
+    route: '/auth',
     variant: 'admin',
   },
   {
@@ -73,7 +74,8 @@ const LOGIN_PORTALS = [
     desc: 'Manage recruiter relationships, schedule corporate drives, execute automated eligibility filters, and track hiring KPIs.',
     features: ['Campus Drive Scheduling', 'Automated Candidate Shortlisting', 'Real-time Placement Analytics'],
     btnLabel: 'Launch TPO Portal',
-    route: '/login/tpo',
+    portal: 'tpo',
+    route: '/auth',
     variant: 'tpo',
   },
   {
@@ -85,10 +87,11 @@ const LOGIN_PORTALS = [
     desc: 'Discover active hiring opportunities, submit applications with verified credentials, and monitor interview schedules live.',
     features: ['One-Click Drive Application', 'Verified Resume Vault', 'Real-Time Application Status'],
     btnLabel: 'Launch Student Portal',
-    route: '/login/student',
+    portal: 'student',
+    route: '/auth',
     variant: 'student',
     hasRegister: true,
-    registerRoute: '/register/student',
+    registerPortal: 'student',
   },
 ];
 
@@ -191,7 +194,7 @@ function PortalCard({ portal, onLogin, onRegister }) {
         <button
           id={`${portal.id}-login-btn`}
           className="btn btn-primary portal-btn"
-          onClick={() => onLogin(portal.route)}
+          onClick={() => onLogin(portal.route, portal.portal)}
         >
           <span>{portal.btnLabel}</span>
           <ArrowRight size={16} />
@@ -201,7 +204,7 @@ function PortalCard({ portal, onLogin, onRegister }) {
           <button
             id="student-register-btn"
             className="btn btn-outline portal-btn-secondary"
-            onClick={() => onRegister(portal.registerRoute)}
+            onClick={() => onRegister(portal.route, portal.registerPortal)}
           >
             <span>New Student? Register Account</span>
           </button>
@@ -382,8 +385,8 @@ export default function Home() {
     document.title = SITE_TITLE;
   }, []);
 
-  const handleLogin = (route) => navigate(route);
-  const handleRegister = (route) => navigate(route);
+  const handleLogin = (route, portal) => navigate(route, { state: { portal } });
+  const handleRegister = (route, portal) => navigate(route, { state: { portal, view: 'register' } });
 
   return (
     <main id="main-content" className="home-page" role="main">
