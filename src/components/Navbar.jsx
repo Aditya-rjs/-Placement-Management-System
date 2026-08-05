@@ -65,14 +65,6 @@ export default function Navbar({ isDark, onToggleTheme, onOpenAuth }) {
     }
   }, []);
 
-  const handleOpenAuthClick = (e, portal = 'student') => {
-    if (onOpenAuth) {
-      e.preventDefault();
-      setMenuOpen(false);
-      onOpenAuth(portal);
-    }
-  };
-
   return (
     <>
       <nav
@@ -122,9 +114,9 @@ export default function Navbar({ isDark, onToggleTheme, onOpenAuth }) {
               type="button"
               className="btn btn-primary btn-sm navbar-cta-btn"
               id="nav-student-login-btn"
-              onClick={e => handleOpenAuthClick(e, 'student')}
+              onClick={() => onOpenAuth && onOpenAuth('student')}
             >
-              <span>Authentication Workspace</span>
+              <span>Student Portal</span>
               <ChevronRight size={14} />
             </button>
 
@@ -172,10 +164,13 @@ export default function Navbar({ isDark, onToggleTheme, onOpenAuth }) {
                 type="button"
                 className="btn btn-primary btn-sm"
                 style={{ width: '100%' }}
-                onClick={e => handleOpenAuthClick(e, 'student')}
+                onClick={() => {
+                  setMenuOpen(false);
+                  if (onOpenAuth) onOpenAuth('student');
+                }}
                 id="mobile-student-login-btn"
               >
-                Open Authentication Workspace
+                Student Portal Log In
               </button>
             </div>
           </motion.div>
