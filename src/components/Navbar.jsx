@@ -1,48 +1,65 @@
 /**
  * Navbar.jsx
- * Professional Header Navigation with:
- * - Enterprise institution branding
- * - Lucide vector icons
- * - Portal portal indicator
- * - Smooth anchor navigation
- * - Responsive mobile drawer
+ * Enterprise Vercel/Linear-inspired Header Navigation
+ * - Active section tracking with smooth animated indicator
+ * - LNJPIT Official Logo & Brand
+ * - Glassmorphism blur & 1px border
+ * - Mobile slide drawer
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { GraduationCap, Menu, X, Shield, ChevronRight } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, ChevronRight, Lock } from 'lucide-react';
 import { APP_CONFIG, SITE_TITLE } from '../config/app.config';
+import LNJPITLogo from './LNJPITLogo';
 import ThemeToggle from './ThemeToggle';
 import '../styles/Navbar.css';
 
 const NAV_LINKS = [
-  { label: 'Overview',   href: '#hero' },
-  { label: 'Portals',    href: '#login-portals' },
-  { label: 'Workflow',   href: '#about-system' },
-  { label: 'Recruiters', href: '#recruiters' },
-  { label: 'Developer',  href: '#about-developer' },
+  { id: 'hero',              label: 'Overview',     href: '#hero' },
+  { id: 'login-portals',     label: 'Portals',      href: '#login-portals' },
+  { id: 'problem-statement', label: 'Why PMS',      href: '#problem-statement' },
+  { id: 'workflow',          label: 'Workflow',     href: '#workflow' },
+  { id: 'features',          label: 'Features',     href: '#features' },
+  { id: 'architecture',      label: 'Architecture', href: '#architecture' },
+  { id: 'recruiters',        label: 'Recruiters',   href: '#recruiters' },
+  { id: 'about-developer',   label: 'Developer',    href: '#about-developer' },
 ];
 
 export default function Navbar({ isDark, onToggleTheme }) {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled]   = useState(false);
+  const [menuOpen, setMenuOpen]   = useState(false);
+  const [activeSection, setActiveSection] = useState('hero');
+  const location = useLocation();
+  const isHome = location.pathname === '/';
 
+  // Handle Navbar Shadow & Active Section Tracking on Scroll
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+
+      if (!isHome) return;
+
+      const sectionEls = NAV_LINKS.map(link => document.querySelector(link.href)).filter(Boolean);
+      const scrollPos = window.scrollY + 200;
+
+      for (let i = sectionEls.length - 1; i >= 0; i--) {
+        const sec = sectionEls[i];
+        if (sec.offsetTop <= scrollPos) {
+          setActiveSection(NAV_LINKS[i].id);
+          break;
+        }
+      }
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHome]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768) setMenuOpen(false);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const handleNavClick = useCallback((href) => {
+  const handleNavClick = useCallback((href, id) => {
     setMenuOpen(false);
+    setActiveSection(id);
     if (href.startsWith('#')) {
       const el = document.querySelector(href);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -58,85 +75,100 @@ export default function Navbar({ isDark, onToggleTheme }) {
         aria-label="Main navigation"
       >
         <div className="container navbar-inner">
-          {/* Institution Logo & Title */}
+
+          {/* LNJPIT Brand & Logo */}
           <Link to="/" className="navbar-logo" aria-label={SITE_TITLE}>
-            <div className="navbar-logo-icon">
-              <GraduationCap size={22} strokeWidth={2.2} />
-            </div>
-            <div className="navbar-logo-text">
-              <span className="navbar-logo-title">{APP_CONFIG.collegeName}</span>
-              <span className="navbar-logo-subtitle">
-                Training &amp; Placement Cell • <span className="version-tag">{APP_CONFIG.appShortName}</span>
-              </span>
-            </div>
+            <LNJPITLogo size={40} />
           </Link>
 
-          {/* Desktop Links */}
-          <ul className="navbar-links" role="list">
-            {NAV_LINKS.map(link => (
-              <li key={link.label}>
-                <a
-                  href={link.href}
-                  onClick={e => { e.preventDefault(); handleNavClick(link.href); }}
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+          {/* Desktop Links with Animated Active Indicator */}
+          {isHome && (
+            <ul className="navbar-links" role="list">
+              {NAV_LINKS.map(link => {
+                const isActive = activeSection === link.id;
+                return (
+                  <li key={link.id} style={{ position: 'relative' }}>
+                    <a
+                      href={link.href}
+                      className={isActive ? 'active' : ''}
+                      onClick={e => { e.preventDefault(); handleNavClick(link.href, link.id); }}
+                    >
+                      {link.label}
+                    </a>
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeNavIndicator"
+                        className="navbar-active-bar"
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
 
-          {/* Right Header Actions */}
+          {/* Header Right Actions */}
           <div className="navbar-actions">
             <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
-            <Link to="/login/student" className="btn btn-primary btn-sm" id="nav-student-login-btn">
-              Student Portal <ChevronRight size={14} />
+            <Link to="/login/student" className="btn btn-primary btn-sm navbar-cta-btn" id="nav-student-login-btn">
+              <span>Student Portal</span>
+              <ChevronRight size={14} />
             </Link>
+
+            {/* Mobile Drawer Hamburger Button */}
+            <button
+              id="navbar-hamburger-btn"
+              className="navbar-hamburger"
+              onClick={() => setMenuOpen(prev => !prev)}
+              aria-label="Toggle menu"
+              aria-expanded={menuOpen}
+            >
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
 
-          {/* Mobile Hamburger Toggle */}
-          <button
-            id="navbar-hamburger-btn"
-            className="navbar-hamburger"
-            onClick={() => setMenuOpen(prev => !prev)}
-            aria-label="Toggle navigation menu"
-            aria-expanded={menuOpen}
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
         </div>
       </nav>
 
-      {/* Mobile Navigation Menu */}
-      <div
-        id="navbar-mobile-menu"
-        className={`navbar-mobile-menu${menuOpen ? ' open' : ''}`}
-        aria-hidden={!menuOpen}
-      >
-        <ul className="navbar-mobile-links" role="list">
-          {NAV_LINKS.map(link => (
-            <li key={link.label}>
-              <a
-                href={link.href}
-                onClick={e => { e.preventDefault(); handleNavClick(link.href); }}
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <div className="navbar-mobile-actions">
-          <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
-          <Link
-            to="/login/student"
-            className="btn btn-primary btn-sm"
-            style={{ width: '100%' }}
-            onClick={() => setMenuOpen(false)}
-            id="mobile-student-login-btn"
+      {/* Mobile Drawer (Framer Motion) */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            id="navbar-mobile-menu"
+            className="navbar-mobile-menu"
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.2 }}
           >
-            Student Login
-          </Link>
-        </div>
-      </div>
+            <ul className="navbar-mobile-links" role="list">
+              {NAV_LINKS.map(link => (
+                <li key={link.id}>
+                  <a
+                    href={link.href}
+                    onClick={e => { e.preventDefault(); handleNavClick(link.href, link.id); }}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div className="navbar-mobile-actions">
+              <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
+              <Link
+                to="/login/student"
+                className="btn btn-primary btn-sm"
+                style={{ width: '100%' }}
+                onClick={() => setMenuOpen(false)}
+                id="mobile-student-login-btn"
+              >
+                Student Portal Log In
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

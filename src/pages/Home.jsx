@@ -1,28 +1,52 @@
 /**
  * Home.jsx
- * Landing page for the Placement Management System.
- * Styled as an authentic University Enterprise Application built by a Final-Year CS Student.
+ * Enterprise SaaS Landing Dashboard for Placement Management System
+ * University: Loknayak Jai Prakash Institute of Technology (LNJPIT)
+ * Developer: Aditya Raj Singh (Final Year B.Tech CSE Student)
  */
 
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield,
   GraduationCap,
   UserCheck,
   Building2,
+  TrendingUp,
+  Award,
+  Users,
   CheckCircle2,
   ArrowRight,
+  Sparkles,
   Code2,
   Terminal,
+  ExternalLink,
   Mail,
   FileCheck2,
   BarChart3,
   Cpu,
-  Database
+  Database,
+  Layers,
+  Server,
+  Cloud,
+  FileText,
+  AlertTriangle,
+  Zap,
+  Check,
+  Send,
+  Lock,
+  Workflow,
+  Globe,
+  HardDrive,
+  Atom,
+  Palette,
+  GitBranch
 } from 'lucide-react';
 import { GithubIcon, LinkedinIcon } from '../components/SocialIcons';
 import { APP_CONFIG, SITE_TITLE } from '../config/app.config';
+import HeroBackground from '../components/HeroBackground';
+import CountUp from '../components/CountUp';
 import '../styles/Home.css';
 
 // ─── Data Configurations ───────────────────────────────────────────────────
@@ -30,34 +54,37 @@ import '../styles/Home.css';
 const LOGIN_PORTALS = [
   {
     id: 'admin',
+    badge: 'Administrator',
     icon: Shield,
-    title: 'Admin Control Center',
-    subtitle: 'System Administrators',
-    desc: 'Complete control over system parameters, user roles, security audits, and database maintenance.',
-    features: ['User Role Management', 'Global System Config', 'Audit Logs & Backup'],
-    btnLabel: 'Access Admin Portal',
+    title: 'Admin Control Portal',
+    subtitle: 'System Administrators & Directors',
+    desc: 'Complete control over institutional parameters, global user roles, enterprise security policies, and database backups.',
+    features: ['Role-Based Permission Matrix', 'Audit Trail & Compliance Logs', 'System-wide Database Backups'],
+    btnLabel: 'Launch Admin Portal',
     route: '/login/admin',
     variant: 'admin',
   },
   {
     id: 'tpo',
+    badge: 'Placement Cell',
     icon: GraduationCap,
     title: 'TPO Representative Portal',
     subtitle: 'Training & Placement Office',
-    desc: 'Manage corporate partners, post job drives, run eligibility filters, and track placement statistics.',
-    features: ['Drive Scheduling', 'Automated Shortlisting', 'Placement Analytics'],
-    btnLabel: 'Access TPO Portal',
+    desc: 'Manage recruiter relationships, schedule corporate drives, execute automated eligibility filters, and track hiring KPIs.',
+    features: ['Campus Drive Scheduling', 'Automated Candidate Shortlisting', 'Real-time Placement Analytics'],
+    btnLabel: 'Launch TPO Portal',
     route: '/login/tpo',
     variant: 'tpo',
   },
   {
     id: 'student',
+    badge: 'Student',
     icon: UserCheck,
-    title: 'Student Career Portal',
+    title: 'Student Candidate Portal',
     subtitle: 'Enrolled Undergraduates',
-    desc: 'Browse eligible campus drives, apply with one click, upload resumes, and monitor application status.',
-    features: ['Active Drive Application', 'Resume & Profile Vault', 'Real-time Status Feed'],
-    btnLabel: 'Access Student Portal',
+    desc: 'Discover active hiring opportunities, submit applications with verified credentials, and monitor interview schedules live.',
+    features: ['One-Click Drive Application', 'Verified Resume Vault', 'Real-Time Application Status'],
+    btnLabel: 'Launch Student Portal',
     route: '/login/student',
     variant: 'student',
     hasRegister: true,
@@ -65,27 +92,63 @@ const LOGIN_PORTALS = [
   },
 ];
 
-const SYSTEM_HIGHLIGHTS = [
+const PROBLEM_POINTS = [
   {
-    icon: Cpu,
-    title: 'Automated Eligibility Engine',
-    desc: 'Instantly filters eligible candidates based on CPI thresholds, active backlog constraints, branch criteria, and graduation batch.',
+    title: 'Manual Paperwork & Friction',
+    desc: 'Legacy paper applications cause immense administrative delays, misaligned candidate records, and lost document copies during hiring season.',
   },
   {
-    icon: FileCheck2,
-    title: 'Real-time Application Tracker',
-    desc: 'Live tracking of recruitment stages: Written Tests, Technical Interviews, HR rounds, and Final Offer Letter distribution.',
+    title: 'Spreadsheet Dependency & Silos',
+    desc: 'Managing thousands of student profiles across fragmented Excel sheets leads to version errors, corrupted data, and zero real-time visibility.',
   },
   {
-    icon: Database,
-    title: 'Centralized Candidate Vault',
-    desc: 'Secure repository for student academic transcripts, verified resumes, certifications, and identity documentation.',
+    title: 'Error-Prone Eligibility Checks',
+    desc: 'Manually verifying CPI cutoffs, active backlogs, and branch criteria across hundreds of applicants results in human error and invalid shortlists.',
   },
   {
-    icon: BarChart3,
-    title: 'TPO Analytics & Reporting',
-    desc: 'Exportable placement reports, branch-wise placement percentages, salary distribution charts, and company visit history.',
+    title: 'Opaque Application Status',
+    desc: 'Students remain in the dark about their test results, interview slots, and offer status due to lack of an automated candidate feedback loop.',
   },
+  {
+    title: 'Uncoordinated Recruiter Operations',
+    desc: 'Coordinating venue schedules, candidate lists, and interview slots via phone calls and emails creates chaos for visiting corporate HR teams.',
+  },
+  {
+    title: 'Lack of Placement Analytics',
+    desc: 'Training & Placement Officers struggle to generate branch-wise placement percentages, salary metrics, and historical trend reports for accreditation.',
+  },
+];
+
+const WORKFLOW_STEPS = [
+  { step: '01', title: 'Student Registration', desc: 'Candidates register with academic records, transcripts & resume.' },
+  { step: '02', title: 'Eligibility Verification', desc: 'System automatically checks CPI, branch, and backlog criteria.' },
+  { step: '03', title: 'Application Submission', desc: 'Students apply to matching corporate drives with one click.' },
+  { step: '04', title: 'Recruiter Review', desc: 'Corporate HRs receive verified candidate shortlists & resumes.' },
+  { step: '05', title: 'Interview Process', desc: 'Live scheduling of written tests, technical & HR interview rounds.' },
+  { step: '06', title: 'Offer Letter', desc: 'Digital offer letter issuance & acceptance status tracking.' },
+  { step: '07', title: 'Placement Analytics', desc: 'TPO dashboards generate real-time placement & salary reports.' },
+];
+
+const WHY_PROJECT_FEATURES = [
+  { icon: Cpu, title: 'Automated Eligibility', desc: 'Instant candidate evaluation against company CPI, backlog, and branch criteria.' },
+  { icon: UserCheck, title: 'Student Candidate Portal', desc: 'Centralized portal for drive discovery, application submission, and status feeds.' },
+  { icon: GraduationCap, title: 'Recruiter Management', desc: 'Streamlined company onboarding, drive scheduling, and shortlist generation.' },
+  { icon: FileCheck2, title: 'Verified Resume Vault', desc: 'Secure storage for candidate transcripts, verified resumes, and certificates.' },
+  { icon: BarChart3, title: 'Placement Analytics', desc: 'Exportable reports, branch placement rates, and salary distribution graphs.' },
+  { icon: Lock, title: 'Role-Based Auth', desc: 'Granular access controls for Administrators, TPO Officers, and Students.' },
+  { icon: Layers, title: 'High-Performance APIs', desc: 'RESTful API architecture built for fast responses and low latent throughput.' },
+  { icon: Globe, title: 'Responsive Design', desc: 'Flawless UI experience across mobile, tablet, desktop, and large displays.' },
+  { icon: Cloud, title: 'Cloud Deployment', desc: 'Configured for high availability deployment on Vercel infrastructure.' },
+];
+
+const ARCHITECTURE_DIAGRAM = [
+  { step: '1', title: 'Students', icon: Users, desc: 'Candidate Input' },
+  { step: '2', title: 'React / Vite Frontend', icon: Atom, desc: 'Client Layer' },
+  { step: '3', title: 'REST API Engine', icon: Layers, desc: 'API Protocol' },
+  { step: '4', title: 'Node / Express Backend', icon: Server, desc: 'Business Logic' },
+  { step: '5', title: 'Database Storage', icon: Database, desc: 'Data Vault' },
+  { step: '6', title: 'Admin & TPO Dashboard', icon: Shield, desc: 'Control Layer' },
+  { step: '7', title: 'Analytics Engine', icon: BarChart3, desc: 'Insights' },
 ];
 
 // ─── Sub-Components ────────────────────────────────────────────────────────
@@ -94,7 +157,15 @@ function PortalCard({ portal, onLogin, onRegister }) {
   const IconComponent = portal.icon;
 
   return (
-    <div className={`portal-card ${portal.variant}`} id={`portal-card-${portal.id}`}>
+    <motion.div
+      whileHover={{ y: -6, transition: { duration: 0.2 } }}
+      className={`portal-card ${portal.variant}`}
+      id={`portal-card-${portal.id}`}
+    >
+      <div className="portal-card-top-bar">
+        <span className="portal-badge-pill">{portal.badge}</span>
+      </div>
+
       <div className="portal-card-header">
         <div className="portal-card-icon-wrapper">
           <IconComponent size={24} strokeWidth={2} />
@@ -136,70 +207,169 @@ function PortalCard({ portal, onLogin, onRegister }) {
           </button>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-function DeveloperCard() {
-  const dev = APP_CONFIG.developer;
+function ContactFormSection() {
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
+  };
+
+  const validate = () => {
+    const errs = {};
+    if (!formData.name.trim()) errs.name = 'Full name is required';
+    if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) errs.email = 'Valid email is required';
+    if (!formData.subject.trim()) errs.subject = 'Subject is required';
+    if (!formData.message.trim()) errs.message = 'Message cannot be empty';
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    }, 5000);
+  };
 
   return (
-    <div className="developer-card" id="developer-card">
-      <div className="developer-header">
-        <div className="developer-avatar-wrapper">
-          {dev.photoUrl ? (
-            <img src={dev.photoUrl} alt={dev.name} className="developer-avatar" />
-          ) : (
-            <div className="developer-avatar-fallback">
-              <Terminal size={36} strokeWidth={1.8} />
-            </div>
-          )}
-          <span className="developer-status-dot" title="Available for engineering opportunities" />
-        </div>
-
-        <div className="developer-title-group">
-          <div className="developer-badge">
-            <Code2 size={14} /> Capstone Engineering Project
-          </div>
-          <h3 className="developer-name">{dev.name}</h3>
-          <p className="developer-role">{dev.title}</p>
-          <p className="developer-institution">
-            {dev.college} • <span className="mono-badge">Reg: {dev.regNo}</span>
+    <section id="contact" className="section contact-section">
+      <div className="container">
+        <div className="section-header">
+          <span className="section-tag">Get in Touch</span>
+          <h2 className="section-title">Contact Training &amp; Placement Office</h2>
+          <p className="section-subtitle">
+            Have questions regarding upcoming campus drives, corporate recruitment partnerships, or candidate verification? Reach out to us directly.
           </p>
         </div>
 
-        <div className="developer-links">
-          {dev.github && (
-            <a href={dev.github} target="_blank" rel="noopener noreferrer" className="dev-social-link" title="GitHub Repository">
-              <GithubIcon size={18} />
-            </a>
-          )}
-          {dev.linkedin && (
-            <a href={dev.linkedin} target="_blank" rel="noopener noreferrer" className="dev-social-link" title="LinkedIn Profile">
-              <LinkedinIcon size={18} />
-            </a>
-          )}
-          {dev.email && (
-            <a href={`mailto:${dev.email}`} className="dev-social-link" title="Contact Email">
-              <Mail size={18} />
-            </a>
-          )}
-        </div>
-      </div>
+        <div className="contact-grid">
+          {/* Info Card */}
+          <div className="contact-info-card">
+            <h3 className="contact-info-title">Placement Office Directory</h3>
+            <p className="contact-info-desc">
+              Loknayak Jai Prakash Institute of Technology<br />
+              Training &amp; Placement Cell, Main Academic Block
+            </p>
 
-      <div className="developer-body">
-        <p className="developer-bio">{dev.bio}</p>
+            <div className="contact-details-list">
+              <div className="contact-detail-item">
+                <Building2 size={18} className="contact-detail-icon" />
+                <div>
+                  <span className="detail-label">Campus Address</span>
+                  <span className="detail-val">{APP_CONFIG.collegeLocation}</span>
+                </div>
+              </div>
 
-        <div className="developer-skills-section">
-          <span className="developer-skills-title">Technical Skills &amp; Stack</span>
-          <div className="developer-skills-grid">
-            {dev.skills.map(skill => (
-              <span key={skill} className="skill-chip">{skill}</span>
-            ))}
+              <div className="contact-detail-item">
+                <Mail size={18} className="contact-detail-icon" />
+                <div>
+                  <span className="detail-label">Official Email</span>
+                  <a href={`mailto:${APP_CONFIG.contactEmail}`} className="detail-val link">{APP_CONFIG.contactEmail}</a>
+                </div>
+              </div>
+
+              <div className="contact-detail-item">
+                <Zap size={18} className="contact-detail-icon" />
+                <div>
+                  <span className="detail-label">Helpdesk Helpline</span>
+                  <span className="detail-val">{APP_CONFIG.contactPhone}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Form */}
+          <div className="contact-form-card">
+            {submitted ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="contact-success-toast"
+              >
+                <CheckCircle2 size={36} color="var(--color-success)" />
+                <h4>Message Sent Successfully!</h4>
+                <p>Thank you for reaching out. The Training &amp; Placement Cell will respond to your query shortly.</p>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} noValidate className="contact-form">
+                <div className="form-grid-2">
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="contact-name">Your Full Name *</label>
+                    <input
+                      id="contact-name"
+                      name="name"
+                      type="text"
+                      className={`form-input${errors.name ? ' error' : ''}`}
+                      placeholder="e.g. Vikram Sharma"
+                      value={formData.name}
+                      onChange={handleChange}
+                    />
+                    {errors.name && <span className="form-error">{errors.name}</span>}
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="contact-email">Email Address *</label>
+                    <input
+                      id="contact-email"
+                      name="email"
+                      type="email"
+                      className={`form-input${errors.email ? ' error' : ''}`}
+                      placeholder="vikram@lnjpit.ac.in"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
+                    {errors.email && <span className="form-error">{errors.email}</span>}
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" htmlFor="contact-subject">Subject / Inquiry Type *</label>
+                  <input
+                    id="contact-subject"
+                    name="subject"
+                    type="text"
+                    className={`form-input${errors.subject ? ' error' : ''}`}
+                    placeholder="e.g. Corporate Recruitment Drive Inquiry"
+                    value={formData.subject}
+                    onChange={handleChange}
+                  />
+                  {errors.subject && <span className="form-error">{errors.subject}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" htmlFor="contact-message">Message *</label>
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    rows={4}
+                    className={`form-input${errors.message ? ' error' : ''}`}
+                    placeholder="Please describe your query in detail..."
+                    value={formData.message}
+                    onChange={handleChange}
+                  />
+                  {errors.message && <span className="form-error">{errors.message}</span>}
+                </div>
+
+                <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%' }}>
+                  <Send size={16} /> Send Inquiry Message
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -220,35 +390,90 @@ export default function Home() {
 
       {/* ══ HERO SECTION ════════════════════════════════════════════════════ */}
       <section id="hero" className="hero-section">
-        <div className="container">
+        <HeroBackground />
+
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="hero-content">
 
             {/* Official Badge */}
-            <div className="hero-official-badge">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="hero-official-badge"
+            >
               <span className="badge-pulse" />
-              <span>OFFICIAL PORTAL • ACADEMIC SESSION 2024-25</span>
-            </div>
+              <span>Final Year B.Tech Capstone Project</span>
+            </motion.div>
 
-            <h1 className="hero-title">
-              <span className="hero-institution-name">{APP_CONFIG.collegeName}</span>
-              <br />
-              Placement Management System
-            </h1>
+            {/* Main Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="hero-title"
+            >
+              Next-Generation Placement Management Platform
+            </motion.h1>
 
-            <p className="hero-description">
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="hero-description"
+            >
               {APP_CONFIG.appTagline}
-            </p>
+            </motion.p>
 
-            {/* Key Metrics Strip */}
-            <div className="hero-metrics-strip">
-              {APP_CONFIG.stats.map(stat => (
-                <div key={stat.label} className="metric-box">
-                  <span className="metric-value">{stat.value}</span>
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '4rem', flexWrap: 'wrap' }}
+            >
+              <button
+                className="btn btn-primary btn-lg"
+                onClick={() => {
+                  document.querySelector('#login-portals')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                <span>Explore Portals</span>
+                <ArrowRight size={18} />
+              </button>
+
+              <button
+                className="btn btn-outline btn-lg"
+                onClick={() => {
+                  document.querySelector('#workflow')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                <span>View System Workflow</span>
+              </button>
+            </motion.div>
+
+            {/* Animated Statistics Cards */}
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="hero-metrics-strip"
+            >
+              {APP_CONFIG.stats.map((stat) => (
+                <motion.div
+                  key={stat.label}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="metric-box"
+                >
+                  <span className="metric-value">
+                    <CountUp end={stat.value} decimals={stat.value % 1 !== 0 ? 1 : 0} suffix={stat.suffix} />
+                  </span>
                   <span className="metric-label">{stat.label}</span>
                   <span className="metric-highlight">{stat.highlight}</span>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
 
           </div>
         </div>
@@ -278,20 +503,88 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══ TOP RECRUITERS SHOWCASE ═════════════════════════════════════════ */}
+      {/* ══ PROBLEM STATEMENT SECTION ═══════════════════════════════════════ */}
+      <section id="problem-statement" className="section problem-section">
+        <div className="container">
+          <div className="section-header">
+            <span className="section-tag">Problem Statement</span>
+            <h2 className="section-title">Why Legacy Placement Systems Fail</h2>
+            <p className="section-subtitle">
+              Traditional paper-and-spreadsheet recruitment processes create bottlenecks for students, Training Officers, and visiting recruiters.
+            </p>
+          </div>
+
+          <div className="problem-grid">
+            {PROBLEM_POINTS.map((point, i) => (
+              <motion.div
+                key={point.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                whileHover={{ y: -4 }}
+                className="problem-card"
+              >
+                <div className="problem-icon">
+                  <AlertTriangle size={20} color="#ef4444" />
+                </div>
+                <h3 className="problem-title">{point.title}</h3>
+                <p className="problem-desc">{point.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ WORKFLOW TIMELINE SECTION ═══════════════════════════════════════ */}
+      <section id="workflow" className="section workflow-section">
+        <div className="container">
+          <div className="section-header">
+            <span className="section-tag">System Workflow</span>
+            <h2 className="section-title">End-to-End Recruitment Lifecycle</h2>
+            <p className="section-subtitle">
+              An automated, multi-stage pipeline connecting students, TPO officers, and corporate recruiters seamlessly.
+            </p>
+          </div>
+
+          <div className="workflow-timeline">
+            {WORKFLOW_STEPS.map((wf, idx) => (
+              <motion.div
+                key={wf.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.1 }}
+                className="workflow-step-card"
+              >
+                <div className="workflow-step-num">{wf.step}</div>
+                <h4 className="workflow-step-title">{wf.title}</h4>
+                <p className="workflow-step-desc">{wf.desc}</p>
+                {idx < WORKFLOW_STEPS.length - 1 && <div className="workflow-line-connector" />}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ RECRUITING PARTNERS SECTION ═════════════════════════════════════ */}
       <section id="recruiters" className="section recruiters-section">
         <div className="container">
           <div className="section-header">
             <span className="section-tag">Corporate Connections</span>
             <h2 className="section-title">Top Recruiting Partners</h2>
             <p className="section-subtitle">
-              Leading multinational corporations and technology innovators hiring from our campus.
+              Leading multinational corporations and technology innovators hiring from LNJPIT campus.
             </p>
           </div>
 
           <div className="recruiters-grid">
             {APP_CONFIG.recruiters.map(recruiter => (
-              <div key={recruiter.name} className="recruiter-card">
+              <motion.div
+                key={recruiter.name}
+                whileHover={{ y: -4, scale: 1.02 }}
+                className="recruiter-card"
+              >
                 <div className="recruiter-icon">
                   <Building2 size={20} />
                 </div>
@@ -299,54 +592,158 @@ export default function Home() {
                   <h4 className="recruiter-name">{recruiter.name}</h4>
                   <span className="recruiter-cat">{recruiter.category}</span>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══ SYSTEM ARCHITECTURE & WORKFLOW ══════════════════════════════════ */}
-      <section id="about-system" className="section system-section">
+      {/* ══ WHY THIS PROJECT (FEATURE CARDS) SECTION ═════════════════════════ */}
+      <section id="features" className="section features-section">
         <div className="container">
           <div className="section-header">
-            <span className="section-tag">System Capabilities</span>
-            <h2 className="section-title">Engineering Highlights &amp; Workflow</h2>
+            <span className="section-tag">Key Features</span>
+            <h2 className="section-title">Why This Project Stands Out</h2>
             <p className="section-subtitle">
-              Built to eliminate manual paperwork, enforce eligibility compliance, and streamline hiring drives.
+              Engineered with modern full-stack architectures, high availability, and institutional compliance standards.
             </p>
           </div>
 
-          <div className="highlights-grid">
-            {SYSTEM_HIGHLIGHTS.map(item => {
-              const IconComp = item.icon;
+          <div className="features-grid">
+            {WHY_PROJECT_FEATURES.map((feat, i) => {
+              const IconComp = feat.icon;
               return (
-                <div key={item.title} className="highlight-card">
-                  <div className="highlight-icon">
-                    <IconComp size={24} strokeWidth={2} />
+                <motion.div
+                  key={feat.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  whileHover={{ y: -5 }}
+                  className="feature-card-premium"
+                >
+                  <div className="feature-icon-premium">
+                    <IconComp size={22} strokeWidth={2} />
                   </div>
-                  <h3 className="highlight-title">{item.title}</h3>
-                  <p className="highlight-desc">{item.desc}</p>
-                </div>
+                  <h3 className="feature-title-premium">✔ {feat.title}</h3>
+                  <p className="feature-desc-premium">{feat.desc}</p>
+                </motion.div>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* ══ ABOUT DEVELOPER ══════════════════════════════════════════════════ */}
-      <section id="about-developer" className="section developer-section">
+      {/* ══ SYSTEM ARCHITECTURE SECTION ═════════════════════════════════════ */}
+      <section id="architecture" className="section architecture-section">
         <div className="container">
           <div className="section-header">
-            <span className="section-tag">Capstone Engineering Project</span>
-            <h2 className="section-title">About the Developer</h2>
+            <span className="section-tag">System Architecture</span>
+            <h2 className="section-title">High-Performance Full Stack Design</h2>
             <p className="section-subtitle">
-              Designed and engineered as a final-year B.Tech Computer Science capstone application.
+              Modular micro-architecture ensuring data integrity, low latent responses, and scale readiness.
             </p>
           </div>
 
-          <DeveloperCard />
+          <div className="architecture-diagram-flow">
+            {ARCHITECTURE_DIAGRAM.map((arch, idx) => {
+              const IconComp = arch.icon;
+              return (
+                <React.Fragment key={arch.step}>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className="arch-node-card"
+                  >
+                    <div className="arch-node-icon">
+                      <IconComp size={22} />
+                    </div>
+                    <span className="arch-node-title">{arch.title}</span>
+                    <span className="arch-node-desc">{arch.desc}</span>
+                  </motion.div>
+
+                  {idx < ARCHITECTURE_DIAGRAM.length - 1 && (
+                    <div className="arch-arrow-connector">
+                      <ArrowRight size={18} />
+                    </div>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
         </div>
       </section>
+
+      {/* ══ DEVELOPER SECTION ═══════════════════════════════════════════════ */}
+      <section id="about-developer" className="section developer-section">
+        <div className="container">
+          <div className="section-header">
+            <span className="section-tag">Project Architect &amp; Lead</span>
+            <h2 className="section-title">About the Developer</h2>
+            <p className="section-subtitle">
+              Architected and built by a Final Year Computer Science &amp; Engineering Student at LNJPIT.
+            </p>
+          </div>
+
+          <div className="developer-card-premium">
+            <div className="developer-card-header">
+              <div className="dev-avatar-box">
+                <Terminal size={38} strokeWidth={1.8} />
+              </div>
+
+              <div>
+                <div className="dev-tag-pill">
+                  <Code2 size={13} /> B.Tech CSE Final Year
+                </div>
+                <h3 className="dev-name-heading">{APP_CONFIG.developer.name}</h3>
+                <p className="dev-tagline-text">{APP_CONFIG.developer.tagline}</p>
+                <span className="dev-reg-number">
+                  {APP_CONFIG.developer.college} • <span className="mono-badge">Reg: {APP_CONFIG.developer.regNo}</span>
+                </span>
+              </div>
+            </div>
+
+            <p className="dev-bio-paragraph">{APP_CONFIG.developer.bio}</p>
+
+            {/* Social Buttons */}
+            <div className="dev-social-buttons">
+              {APP_CONFIG.developer.github && (
+                <a href={APP_CONFIG.developer.github} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm">
+                  <GithubIcon size={16} />
+                  <span>GitHub Repository</span>
+                </a>
+              )}
+              {APP_CONFIG.developer.linkedin && (
+                <a href={APP_CONFIG.developer.linkedin} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm">
+                  <LinkedinIcon size={16} />
+                  <span>LinkedIn Profile</span>
+                </a>
+              )}
+              {APP_CONFIG.developer.email && (
+                <a href={`mailto:${APP_CONFIG.developer.email}`} className="btn btn-outline btn-sm">
+                  <Mail size={16} />
+                  <span>Email Developer</span>
+                </a>
+              )}
+            </div>
+
+            {/* Tech Stack Chips */}
+            <div style={{ marginTop: '2rem' }}>
+              <span className="dev-tech-label">Technologies &amp; Architecture Stack</span>
+              <div className="tech-chips-grid">
+                {APP_CONFIG.techStack.map(tech => (
+                  <span key={tech.name} className="tech-chip-item">
+                    <span className="tech-chip-dot" />
+                    {tech.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ CONTACT SECTION ═════════════════════════════════════════════════ */}
+      <ContactFormSection />
 
     </main>
   );
