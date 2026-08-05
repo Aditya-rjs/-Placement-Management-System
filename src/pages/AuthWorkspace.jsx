@@ -66,23 +66,23 @@ const contentVariants = {
 };
 
 // ── Main Component ────────────────────────────────────────────────────────
-export default function AuthWorkspace() {
+export default function AuthWorkspace({ initialPortal: defaultPortal = 'student', initialStudentView: defaultView = 'login', onClose }) {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  // Determine initial portal from URL or location state
+  // Determine initial portal from props, URL or location state
   const initialPortal = useMemo(() => {
     const fromState = location.state?.portal;
     const fromParam = searchParams.get('portal');
-    const portal = fromState || fromParam || 'student';
+    const portal = defaultPortal || fromState || fromParam || 'student';
     return ['admin', 'tpo', 'student'].includes(portal) ? portal : 'student';
-  }, []);
+  }, [defaultPortal]);
 
   const initialStudentView = useMemo(() => {
     const fromState = location.state?.view;
     const fromParam = searchParams.get('view');
-    return (fromState || fromParam) === 'register' ? 'register' : 'login';
-  }, []);
+    return defaultView || (fromState || fromParam) === 'register' ? 'register' : 'login';
+  }, [defaultView]);
 
   const [activePortal, setActivePortal] = useState(initialPortal);
   const [studentView, setStudentView] = useState(initialStudentView);
@@ -165,10 +165,22 @@ export default function AuthWorkspace() {
 
         {/* Footer */}
         <div className="auth-workspace-nav-footer">
-          <Link to="/" className="auth-workspace-nav-footer-back">
-            <ArrowLeft size={14} />
-            <span>Back to Overview</span>
-          </Link>
+          {onClose ? (
+            <button
+              type="button"
+              className="auth-workspace-nav-footer-back"
+              onClick={onClose}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', width: 'auto', padding: 0 }}
+            >
+              <ArrowLeft size={14} />
+              <span>Back to Overview</span>
+            </button>
+          ) : (
+            <Link to="/" className="auth-workspace-nav-footer-back">
+              <ArrowLeft size={14} />
+              <span>Back to Overview</span>
+            </Link>
+          )}
           <p className="auth-workspace-nav-footer-copy">
             &copy; 2026 {APP_CONFIG.collegeShortName} &bull; {APP_CONFIG.appVersion}
           </p>

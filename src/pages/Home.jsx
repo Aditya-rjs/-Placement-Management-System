@@ -156,63 +156,7 @@ const ARCHITECTURE_DIAGRAM = [
 
 // ─── Sub-Components ────────────────────────────────────────────────────────
 
-function PortalCard({ portal, onLogin, onRegister }) {
-  const IconComponent = portal.icon;
-
-  return (
-    <motion.div
-      whileHover={{ y: -6, transition: { duration: 0.2 } }}
-      className={`portal-card ${portal.variant}`}
-      id={`portal-card-${portal.id}`}
-    >
-      <div className="portal-card-top-bar">
-        <span className="portal-badge-pill">{portal.badge}</span>
-      </div>
-
-      <div className="portal-card-header">
-        <div className="portal-card-icon-wrapper">
-          <IconComponent size={24} strokeWidth={2} />
-        </div>
-        <div>
-          <span className="portal-card-subtitle">{portal.subtitle}</span>
-          <h3 className="portal-card-title">{portal.title}</h3>
-        </div>
-      </div>
-
-      <p className="portal-card-desc">{portal.desc}</p>
-
-      <ul className="portal-card-features">
-        {portal.features.map(feat => (
-          <li key={feat}>
-            <CheckCircle2 size={15} className="feature-check-icon" />
-            <span>{feat}</span>
-          </li>
-        ))}
-      </ul>
-
-      <div className="portal-card-actions">
-        <button
-          id={`${portal.id}-login-btn`}
-          className="btn btn-primary portal-btn"
-          onClick={() => onLogin(portal.route, portal.portal)}
-        >
-          <span>{portal.btnLabel}</span>
-          <ArrowRight size={16} />
-        </button>
-
-        {portal.hasRegister && (
-          <button
-            id="student-register-btn"
-            className="btn btn-outline portal-btn-secondary"
-            onClick={() => onRegister(portal.route, portal.registerPortal)}
-          >
-            <span>New Student? Register Account</span>
-          </button>
-        )}
-      </div>
-    </motion.div>
-  );
-}
+// (PortalCard removed — replaced by single AuthPortalCard below)
 
 function ContactFormSection() {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
@@ -378,15 +322,11 @@ function ContactFormSection() {
 
 // ─── Main Component ────────────────────────────────────────────────────────
 
-export default function Home() {
-  const navigate = useNavigate();
+export default function Home({ onOpenAuth }) {
 
   useEffect(() => {
     document.title = SITE_TITLE;
   }, []);
-
-  const handleLogin = (route, portal) => navigate(route, { state: { portal } });
-  const handleRegister = (route, portal) => navigate(route, { state: { portal, view: 'register' } });
 
   return (
     <main id="main-content" className="home-page" role="main">
@@ -438,11 +378,9 @@ export default function Home() {
             >
               <button
                 className="btn btn-primary btn-lg"
-                onClick={() => {
-                  document.querySelector('#login-portals')?.scrollIntoView({ behavior: 'smooth' });
-                }}
+                onClick={() => onOpenAuth && onOpenAuth('student')}
               >
-                <span>Explore Portals</span>
+                <span>Open Authentication Portal</span>
                 <ArrowRight size={18} />
               </button>
 
@@ -482,27 +420,63 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══ PORTALS SELECTION SECTION ═══════════════════════════════════════ */}
+      {/* ══ AUTHENTICATION PORTAL SECTION ════════════════════════════════ */}
       <section id="login-portals" className="section portals-section">
         <div className="container">
           <div className="section-header">
-            <span className="section-tag">Role-Based Access</span>
-            <h2 className="section-title">Select Authentication Portal</h2>
+            <span className="section-tag">Secure Access</span>
+            <h2 className="section-title">Authentication Portal</h2>
             <p className="section-subtitle">
-              Choose your authorized user category to log into the Placement Management System.
+              Access role-based login for Administrators, TPO Officers, and Students.
             </p>
           </div>
 
-          <div className="portals-grid">
-            {LOGIN_PORTALS.map(portal => (
-              <PortalCard
-                key={portal.id}
-                portal={portal}
-                onLogin={handleLogin}
-                onRegister={handleRegister}
-              />
-            ))}
-          </div>
+          <motion.div
+            whileHover={{ y: -4, transition: { duration: 0.25 } }}
+            className="auth-portal-launch-card"
+            id="auth-portal-launch-card"
+            onClick={() => onOpenAuth && onOpenAuth('student')}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && onOpenAuth && onOpenAuth('student')}
+          >
+            {/* Top glow accent */}
+            <div className="auth-launch-glow" />
+
+            <div className="auth-launch-header">
+              <div className="auth-launch-icon">
+                <Lock size={28} strokeWidth={2} />
+              </div>
+              <div>
+                <h3 className="auth-launch-title">Authentication Workspace</h3>
+                <p className="auth-launch-sub">Unified login portal for all user roles</p>
+              </div>
+            </div>
+
+            <p className="auth-launch-desc">
+              Securely sign in to your authorized portal — Admin, TPO Officer, or Student.
+              Role-based access controls ensure only verified users can access their respective dashboards.
+            </p>
+
+            {/* Portal badges */}
+            <div className="auth-launch-badges">
+              <span className="auth-launch-badge admin">
+                <Shield size={14} /> Administrator
+              </span>
+              <span className="auth-launch-badge tpo">
+                <GraduationCap size={14} /> TPO Officer
+              </span>
+              <span className="auth-launch-badge student">
+                <UserCheck size={14} /> Student
+              </span>
+            </div>
+
+            {/* CTA */}
+            <div className="auth-launch-cta">
+              <span>Open Authentication Workspace</span>
+              <ArrowRight size={18} />
+            </div>
+          </motion.div>
         </div>
       </section>
 

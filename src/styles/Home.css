@@ -184,6 +184,138 @@
   box-shadow: var(--shadow-lg), var(--shadow-glow);
 }
 
+/* ── Single Launch Card ─────────────────────────────────── */
+.auth-portal-launch-card {
+  max-width: 780px;
+  margin: 0 auto;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: 2.75rem 2.5rem;
+  box-shadow: var(--shadow-lg), 0 0 50px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.auth-portal-launch-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-xl), 0 0 35px rgba(37, 99, 235, 0.2);
+}
+
+.auth-launch-glow {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.18) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.auth-launch-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.auth-launch-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-xl);
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-light);
+  flex-shrink: 0;
+}
+
+.auth-launch-title {
+  font-size: clamp(1.35rem, 2vw, 1.65rem);
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 0.2rem;
+}
+
+.auth-launch-sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary-light);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.auth-launch-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+
+.auth-launch-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.auth-launch-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.auth-launch-badge.admin {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #ef4444;
+}
+
+.auth-launch-badge.tpo {
+  background: rgba(14, 165, 233, 0.1);
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  color: #0ea5e9;
+}
+
+.auth-launch-badge.student {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #10b981;
+}
+
+.auth-launch-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.95rem;
+  background: var(--gradient-button);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+  transition: all 0.25s ease;
+}
+
+.auth-portal-launch-card:hover .auth-launch-cta {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  box-shadow: 0 6px 25px rgba(37, 99, 235, 0.45);
+}
+
 .portal-card-top-bar {
   display: flex;
   justify-content: flex-end;

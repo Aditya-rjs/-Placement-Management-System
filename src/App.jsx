@@ -4,46 +4,35 @@
  * Handles:
  *  - Theme management (dark/light via useTheme hook)
  *  - React Router v6 route definitions
- *  - Persistent Navbar + Footer layout on home route
- *  - Unified Authentication Workspace (/auth)
+ *  - MainView manages Home ↔ Auth slide transitions at "/"
  */
 
 import React, { Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useTheme } from './hooks/useTheme';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
 
 // ── Page imports ─────────────────────────────────────────
-import Home            from './pages/Home';
-import AuthWorkspace   from './pages/AuthWorkspace';
+import MainView        from './pages/MainView';
 import PlaceholderPage from './pages/PlaceholderPage';
 
-// ─── Layout wrapper: Shows Navbar + Footer only on Home ───
+// ─── Layout wrapper ──────────────────────────────────────
 function AppLayout({ isDark, onToggleTheme }) {
-  const location = useLocation();
-  const isHome   = location.pathname === '/';
-
   return (
-    <>
-      {isHome && <Navbar isDark={isDark} onToggleTheme={onToggleTheme} />}
-      <Routes>
-        <Route path="/"                  element={<Home />} />
-        <Route path="/auth"              element={<AuthWorkspace />} />
+    <Routes>
+      <Route path="/" element={<MainView isDark={isDark} onToggleTheme={onToggleTheme} />} />
 
-        {/* Legacy auth routes → redirect to unified workspace */}
-        <Route path="/login/admin"       element={<Navigate to="/auth?portal=admin" replace />} />
-        <Route path="/login/tpo"         element={<Navigate to="/auth?portal=tpo" replace />} />
-        <Route path="/login/student"     element={<Navigate to="/auth?portal=student" replace />} />
-        <Route path="/register/student"  element={<Navigate to="/auth?portal=student&view=register" replace />} />
+      {/* Legacy auth routes → redirect to home (auth is now inside MainView) */}
+      <Route path="/auth"              element={<Navigate to="/" replace />} />
+      <Route path="/login/admin"       element={<Navigate to="/" replace />} />
+      <Route path="/login/tpo"         element={<Navigate to="/" replace />} />
+      <Route path="/login/student"     element={<Navigate to="/" replace />} />
+      <Route path="/register/student"  element={<Navigate to="/" replace />} />
 
-        <Route path="/privacy"           element={<PlaceholderPage />} />
-        <Route path="/terms"             element={<PlaceholderPage />} />
-        {/* 404 Catch-all */}
-        <Route path="*"                  element={<PlaceholderPage />} />
-      </Routes>
-      {isHome && <Footer />}
-    </>
+      <Route path="/privacy"           element={<PlaceholderPage />} />
+      <Route path="/terms"             element={<PlaceholderPage />} />
+      {/* 404 Catch-all */}
+      <Route path="*"                  element={<PlaceholderPage />} />
+    </Routes>
   );
 }
 
