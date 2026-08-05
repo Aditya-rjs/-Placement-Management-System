@@ -1,20 +1,34 @@
 /**
  * StudentRegister.jsx
- * Technical Student Candidate Registration Form.
+ * Redesigned Split-Screen Student Candidate Registration Page
+ * Grouped sections: Personal Info, Academic Info, Account Security
+ * Live Validation, Password Strength & Requirements Checklist, Floating Labels
  */
 
-import React, { useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
-  UserPlus,
-  ArrowLeft,
+  User,
+  Mail,
+  Phone,
+  Hash,
+  GraduationCap,
+  Calendar,
+  Lock,
   Eye,
   EyeOff,
-  Building2,
+  Check,
   CheckCircle2,
-  UserCheck
+  AlertCircle,
+  ArrowRight,
+  UserPlus,
+  HelpCircle,
+  ArrowLeft
 } from 'lucide-react';
 import { APP_CONFIG } from '../config/app.config';
+import AuthLeftPanel from '../components/AuthLeftPanel';
+import LNJPITLogo from '../components/LNJPITLogo';
 import '../styles/Auth.css';
 
 const BRANCHES = [
@@ -26,92 +40,84 @@ const BRANCHES = [
   'Civil Engineering',
   'Electrical Engineering',
   'Chemical Engineering',
-  'Other Stream',
 ];
 
 const BATCHES = ['2021 - 2025', '2022 - 2026', '2023 - 2027', '2024 - 2028'];
 
 const INITIAL_FORM = {
   fullName: '',
-  branch: '',
-  regNumber: '',
-  batch: '',
   phone: '',
   email: '',
+  regNumber: '',
+  branch: '',
+  batch: '',
   password: '',
   confirmPassword: '',
 };
 
-const INITIAL_ERRORS = Object.fromEntries(Object.keys(INITIAL_FORM).map(k => [k, '']));
-
 const VALIDATORS = {
   fullName: (v) => {
-    if (!v.trim()) return 'Full name is required.';
-    if (v.trim().length < 3) return 'Name must be at least 3 characters.';
-    if (!/^[a-zA-Z\s.'-]+$/.test(v)) return 'Name can only contain letters and spaces.';
+    if (!v.trim()) return 'Full name is required';
+    if (v.trim().length < 3) return 'Name must be at least 3 characters';
+    if (!/^[a-zA-Z\s.'-]+$/.test(v)) return 'Name can only contain letters';
     return '';
   },
-  branch: (v) => (!v ? 'Please select your engineering branch.' : ''),
-  regNumber: (v) => {
-    if (!v.trim()) return 'Registration number is required.';
-    if (v.trim().length < 5) return 'Registration number must be at least 5 characters.';
-    return '';
-  },
-  batch: (v) => (!v ? 'Please select your graduation batch.' : ''),
   phone: (v) => {
-    if (!v.trim()) return 'Phone number is required.';
-    if (!/^[6-9]\d{9}$/.test(v.replace(/\s/g, '')))
-      return 'Enter a valid 10-digit mobile number.';
+    if (!v.trim()) return 'Phone number is required';
+    if (!/^[6-9]\d{9}$/.test(v.replace(/\s/g, ''))) return 'Enter valid 10-digit mobile number';
     return '';
   },
   email: (v) => {
-    if (!v.trim()) return 'Email is required.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'Enter a valid email address.';
+    if (!v.trim()) return 'Institutional email is required';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'Enter valid email address';
     return '';
   },
+  regNumber: (v) => {
+    if (!v.trim()) return 'Registration number is required';
+    if (v.trim().length < 5) return 'Reg number must be at least 5 characters';
+    return '';
+  },
+  branch: (v) => (!v ? 'Select engineering branch' : ''),
+  batch: (v) => (!v ? 'Select graduation batch' : ''),
   password: (v) => {
-    if (!v) return 'Password is required.';
-    if (v.length < 8) return 'Password must be at least 8 characters.';
-    if (!/[A-Z]/.test(v)) return 'Must contain at least 1 uppercase letter.';
-    if (!/[0-9]/.test(v)) return 'Must contain at least 1 number.';
+    if (!v) return 'Password is required';
+    if (v.length < 8) return 'Minimum 8 characters';
+    if (!/[A-Z]/.test(v)) return 'Requires 1 uppercase letter';
+    if (!/[0-9]/.test(v)) return 'Requires 1 number';
+    if (!/[^A-Za-z0-9]/.test(v)) return 'Requires 1 special character';
     return '';
   },
   confirmPassword: (v, form) => {
-    if (!v) return 'Please confirm your password.';
-    if (v !== form.password) return 'Passwords do not match.';
+    if (!v) return 'Please confirm password';
+    if (v !== form.password) return 'Passwords do not match';
     return '';
   },
 };
 
-function getPasswordStrength(password) {
-  if (!password) return { score: 0, label: '', color: '' };
-  let score = 0;
-  if (password.length >= 8)  score++;
-  if (password.length >= 12) score++;
-  if (/[A-Z]/.test(password)) score++;
-  if (/[0-9]/.test(password)) score++;
-  if (/[^A-Za-z0-9]/.test(password)) score++;
-
-  if (score <= 1) return { score: 20, label: 'Weak', color: '#ef4444' };
-  if (score === 2) return { score: 40, label: 'Fair', color: '#f59e0b' };
-  if (score === 3) return { score: 70, label: 'Good', color: '#3b82f6' };
-  return                  { score: 100, label: 'Strong', color: '#10b981' };
-}
-
 export default function StudentRegister() {
-  const [form, setForm]           = useState(INITIAL_FORM);
-  const [errors, setErrors]       = useState(INITIAL_ERRORS);
-  const [showPass, setShowPass]   = useState(false);
-  const [showConf, setShowConf]   = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [touched, setTouched]     = useState({});
+  const navigate = useNavigate();
 
-  const strength = getPasswordStrength(form.password);
+  const [form, setForm]                 = useState(INITIAL_FORM);
+  const [errors, setErrors]             = useState({});
+  const [focused, setFocused]           = useState({});
+  const [showPass, setShowPass]         = useState(false);
+  const [showConf, setShowConf]         = useState(false);
+  const [capsLockOn, setCapsLockOn]     = useState(false);
+  const [loadingState, setLoadingState] = useState('idle'); // 'idle' | 'creating' | 'success'
+
+  useEffect(() => {
+    document.title = `Student Registration | ${APP_CONFIG.collegeName}`;
+  }, []);
+
+  const handleKeyDown = (e) => {
+    if (e.getModifierState) {
+      setCapsLockOn(e.getModifierState('CapsLock'));
+    }
+  };
 
   const validateField = useCallback((name, value, currentForm) => {
-    const validator = VALIDATORS[name];
-    if (!validator) return '';
-    return validator(value, currentForm ?? form);
+    const fn = VALIDATORS[name];
+    return fn ? fn(value, currentForm ?? form) : '';
   }, [form]);
 
   const handleChange = (e) => {
@@ -119,292 +125,398 @@ export default function StudentRegister() {
     const updatedForm = { ...form, [name]: value };
     setForm(updatedForm);
 
-    if (touched[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: validateField(name, value, updatedForm),
-        ...(name === 'password' && touched.confirmPassword
-          ? { confirmPassword: VALIDATORS.confirmPassword(updatedForm.confirmPassword, updatedForm) }
-          : {}),
-      }));
-    }
-  };
-
-  const handleBlur = (e) => {
-    const { name, value } = e.target;
-    setTouched(prev => ({ ...prev, [name]: true }));
-    setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
+    setErrors(prev => ({
+      ...prev,
+      [name]: validateField(name, value, updatedForm),
+      ...(name === 'password' && form.confirmPassword
+        ? { confirmPassword: VALIDATORS.confirmPassword(form.confirmPassword, updatedForm) }
+        : {}),
+    }));
   };
 
   const validateAll = () => {
     const newErrors = {};
-    let hasError = false;
-    Object.keys(INITIAL_FORM).forEach(field => {
-      const err = VALIDATORS[field]?.(form[field], form) ?? '';
-      newErrors[field] = err;
-      if (err) hasError = true;
+    let hasErr = false;
+    Object.keys(INITIAL_FORM).forEach(k => {
+      const err = VALIDATORS[k]?.(form[k], form) ?? '';
+      newErrors[k] = err;
+      if (err) hasErr = true;
     });
     setErrors(newErrors);
-    setTouched(Object.fromEntries(Object.keys(INITIAL_FORM).map(k => [k, true])));
-    return !hasError;
+    return !hasErr;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateAll()) return;
-    setSubmitted(true);
+
+    setLoadingState('creating');
+
+    setTimeout(() => {
+      setLoadingState('success');
+    }, 1200);
   };
 
-  if (submitted) {
+  // Password Requirements Check
+  const reqMin8 = form.password.length >= 8;
+  const reqUpper = /[A-Z]/.test(form.password);
+  const reqNum   = /[0-9]/.test(form.password);
+  const reqSpec  = /[^A-Za-z0-9]/.test(form.password);
+
+  if (loadingState === 'success') {
     return (
-      <div className="auth-page" id="student-register-success-page">
-        <div className="auth-card" style={{ textAlign: 'center', maxWidth: '500px' }}>
-          <div className="auth-card-icon-badge student" style={{ width: '64px', height: '64px', margin: '0 auto 1.5rem' }}>
-            <CheckCircle2 size={32} />
-          </div>
-          <h1 className="auth-card-title" style={{ marginBottom: '0.5rem' }}>
-            Candidate Profile Created
-          </h1>
-          <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem', fontSize: 'var(--font-size-sm)', lineHeight: 1.6 }}>
-            Your student candidate registration for <strong>{form.fullName}</strong> ({form.regNumber}) has been submitted successfully.
-          </p>
-          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
-            <Link to="/login/student" className="btn btn-primary btn-sm" id="goto-student-login-btn">
-              Proceed to Student Login
-            </Link>
-            <Link to="/" className="btn btn-outline btn-sm" id="goto-home-btn">
-              Back to Overview
-            </Link>
-          </div>
-        </div>
+      <div className="auth-split-container">
+        <AuthLeftPanel portalTitle="Student Registration" />
+        <main className="auth-right-panel">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="auth-card-modern"
+            style={{ textAlign: 'center', padding: '3rem 2rem' }}
+          >
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', color: 'var(--color-success)' }}>
+              <CheckCircle2 size={36} />
+            </div>
+
+            <h2 className="auth-card-main-title" style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>
+              🎉 Registration Successful!
+            </h2>
+
+            <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)', lineHeight: 1.6, marginBottom: '2rem' }}>
+              Your candidate profile for <strong>{form.fullName}</strong> ({form.regNumber}) has been created successfully.<br />
+              You can now log in using your institutional email address.
+            </p>
+
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Link to="/login/student" className="btn btn-primary btn-sm" id="goto-student-login-btn">
+                <span>Sign in to Student Portal</span>
+                <ArrowRight size={16} />
+              </Link>
+              <Link to="/" className="btn btn-outline btn-sm" id="goto-home-btn">
+                Back to Overview
+              </Link>
+            </div>
+          </motion.div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="auth-page" id="student-register-page">
-      <div className="auth-card wide">
+    <div className="auth-split-container" id="student-register-page">
+      <AuthLeftPanel portalTitle="Candidate Account Setup" />
 
-        <Link to="/login/student" className="auth-back-link">
-          <ArrowLeft size={16} /> Back to Student Login
-        </Link>
-
-        <div className="auth-card-header">
-          <div className="auth-card-icon-badge student">
-            <UserPlus size={26} />
-          </div>
-          <div className="auth-college-tag">
-            <Building2 size={13} /> {APP_CONFIG.collegeName}
-          </div>
-          <h1 className="auth-card-title">Student Candidate Registration</h1>
-          <p className="auth-card-subtitle">
-            Register your candidate record for upcoming placement drives &amp; recruitment activities
-          </p>
-        </div>
-
-        <form
-          id="student-register-form"
-          className="auth-form"
-          onSubmit={handleSubmit}
-          noValidate
+      <main className="auth-right-panel" role="main">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="auth-card-modern wide"
         >
-          <div className="form-grid-2">
+          {/* Header */}
+          <div className="auth-institution-header">
+            <span className="auth-portal-type-badge student">
+              <UserPlus size={14} /> Student Candidate Registration
+            </span>
 
-            {/* Full Name */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="reg-fullname">Full Name *</label>
-              <input
-                id="reg-fullname"
-                name="fullName"
-                type="text"
-                className={`form-input${errors.fullName ? ' error' : ''}`}
-                placeholder="Rahul Sharma"
-                value={form.fullName}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                autoComplete="name"
-              />
-              {errors.fullName && <span className="form-error">{errors.fullName}</span>}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+              <LNJPITLogo size={36} />
             </div>
 
-            {/* Branch */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="reg-branch">Academic Branch *</label>
-              <select
-                id="reg-branch"
-                name="branch"
-                className={`form-input${errors.branch ? ' error' : ''}`}
-                value={form.branch}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              >
-                <option value="">Select Engineering Branch</option>
-                {BRANCHES.map(b => (
-                  <option key={b} value={b}>{b}</option>
-                ))}
-              </select>
-              {errors.branch && <span className="form-error">{errors.branch}</span>}
+            <h2 className="auth-card-main-title">Create Candidate Profile</h2>
+            <p className="auth-card-main-sub">
+              Register for upcoming campus recruitment drives &amp; candidate verification
+            </p>
+          </div>
+
+          <form id="student-register-form" onSubmit={handleSubmit} noValidate>
+
+            {/* SECTION 1: PERSONAL INFORMATION */}
+            <div className="auth-section-divider">
+              <span className="auth-section-divider-title">1. Personal Information</span>
             </div>
 
-            {/* Registration Number */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="reg-regnumber">Registration Number *</label>
-              <input
-                id="reg-regnumber"
-                name="regNumber"
-                type="text"
-                className={`form-input${errors.regNumber ? ' error' : ''}`}
-                placeholder="2021CSE084"
-                value={form.regNumber}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              {errors.regNumber && <span className="form-error">{errors.regNumber}</span>}
-            </div>
-
-            {/* Batch */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="reg-batch">Graduation Batch *</label>
-              <select
-                id="reg-batch"
-                name="batch"
-                className={`form-input${errors.batch ? ' error' : ''}`}
-                value={form.batch}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              >
-                <option value="">Select Graduation Batch</option>
-                {BATCHES.map(b => (
-                  <option key={b} value={b}>{b}</option>
-                ))}
-              </select>
-              {errors.batch && <span className="form-error">{errors.batch}</span>}
-            </div>
-
-            {/* Phone */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="reg-phone">Contact Phone *</label>
-              <input
-                id="reg-phone"
-                name="phone"
-                type="tel"
-                className={`form-input${errors.phone ? ' error' : ''}`}
-                placeholder="9876543210"
-                value={form.phone}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                maxLength={10}
-              />
-              {errors.phone && <span className="form-error">{errors.phone}</span>}
-            </div>
-
-            {/* Email */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="reg-email">Institutional Email *</label>
-              <input
-                id="reg-email"
-                name="email"
-                type="email"
-                className={`form-input${errors.email ? ' error' : ''}`}
-                placeholder="rahul.sharma@xyztech.edu.in"
-                value={form.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                autoComplete="email"
-              />
-              {errors.email && <span className="form-error">{errors.email}</span>}
-            </div>
-
-            {/* Password */}
-            <div className="form-group full">
-              <label className="form-label" htmlFor="reg-password">Account Password *</label>
-              <div className="input-wrapper">
-                <input
-                  id="reg-password"
-                  name="password"
-                  type={showPass ? 'text' : 'password'}
-                  className={`form-input${errors.password ? ' error' : ''}`}
-                  placeholder="Min 8 chars, 1 uppercase letter, 1 number"
-                  value={form.password}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  autoComplete="new-password"
-                />
-                <button
-                  type="button"
-                  className="input-toggle-btn"
-                  onClick={() => setShowPass(p => !p)}
-                  aria-label={showPass ? 'Hide password' : 'Show password'}
-                >
-                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
+            <div className="form-grid-2">
+              {/* Full Name */}
+              <div className="form-group">
+                <div className={`floating-input-wrapper ${focused.fullName ? 'focused' : ''} ${form.fullName ? 'has-value' : ''}`}>
+                  <User size={18} className="input-leading-icon" />
+                  <input
+                    id="reg-fullname"
+                    name="fullName"
+                    type="text"
+                    className={`form-input${errors.fullName ? ' error' : ''}`}
+                    value={form.fullName}
+                    onChange={handleChange}
+                    onFocus={() => setFocused(prev => ({ ...prev, fullName: true }))}
+                    onBlur={() => setFocused(prev => ({ ...prev, fullName: false }))}
+                    autoComplete="name"
+                  />
+                  <label className="floating-label" htmlFor="reg-fullname">Full Name (e.g. Rahul Sharma)</label>
+                  {form.fullName && !errors.fullName && (
+                    <div className="input-trailing-box"><CheckCircle2 size={15} color="var(--color-success)" /></div>
+                  )}
+                </div>
+                {errors.fullName && <span className="validation-status-text invalid"><AlertCircle size={12} /> {errors.fullName}</span>}
               </div>
-              {errors.password && <span className="form-error">{errors.password}</span>}
-              {form.password && !errors.password && (
-                <div className="password-strength">
-                  <div className="password-strength-bar">
-                    <div
-                      className="password-strength-fill"
-                      style={{ width: `${strength.score}%`, background: strength.color }}
-                    />
+
+              {/* Phone Number */}
+              <div className="form-group">
+                <div className={`floating-input-wrapper ${focused.phone ? 'focused' : ''} ${form.phone ? 'has-value' : ''}`}>
+                  <Phone size={18} className="input-leading-icon" />
+                  <input
+                    id="reg-phone"
+                    name="phone"
+                    type="tel"
+                    className={`form-input${errors.phone ? ' error' : ''}`}
+                    value={form.phone}
+                    onChange={handleChange}
+                    onFocus={() => setFocused(prev => ({ ...prev, phone: true }))}
+                    onBlur={() => setFocused(prev => ({ ...prev, phone: false }))}
+                    maxLength={10}
+                    autoComplete="tel"
+                  />
+                  <label className="floating-label" htmlFor="reg-phone">Phone Number (10 digits)</label>
+                  {form.phone && !errors.phone && (
+                    <div className="input-trailing-box"><CheckCircle2 size={15} color="var(--color-success)" /></div>
+                  )}
+                </div>
+                {errors.phone && <span className="validation-status-text invalid"><AlertCircle size={12} /> {errors.phone}</span>}
+              </div>
+
+              {/* Institutional Email */}
+              <div className="form-group full">
+                <div className={`floating-input-wrapper ${focused.email ? 'focused' : ''} ${form.email ? 'has-value' : ''}`}>
+                  <Mail size={18} className="input-leading-icon" />
+                  <input
+                    id="reg-email"
+                    name="email"
+                    type="email"
+                    className={`form-input${errors.email ? ' error' : ''}`}
+                    value={form.email}
+                    onChange={handleChange}
+                    onFocus={() => setFocused(prev => ({ ...prev, email: true }))}
+                    onBlur={() => setFocused(prev => ({ ...prev, email: false }))}
+                    autoComplete="email"
+                  />
+                  <label className="floating-label" htmlFor="reg-email">Institutional Email (e.g. rahul@lnjpit.ac.in)</label>
+                  {form.email && !errors.email && (
+                    <div className="input-trailing-box"><CheckCircle2 size={15} color="var(--color-success)" /></div>
+                  )}
+                </div>
+                {errors.email && <span className="validation-status-text invalid"><AlertCircle size={12} /> {errors.email}</span>}
+              </div>
+            </div>
+
+            {/* SECTION 2: ACADEMIC INFORMATION */}
+            <div className="auth-section-divider">
+              <span className="auth-section-divider-title">2. Academic Information</span>
+            </div>
+
+            <div className="form-grid-2">
+              {/* Registration Number */}
+              <div className="form-group">
+                <div className={`floating-input-wrapper ${focused.regNumber ? 'focused' : ''} ${form.regNumber ? 'has-value' : ''}`}>
+                  <Hash size={18} className="input-leading-icon" />
+                  <input
+                    id="reg-regnumber"
+                    name="regNumber"
+                    type="text"
+                    className={`form-input${errors.regNumber ? ' error' : ''}`}
+                    value={form.regNumber}
+                    onChange={handleChange}
+                    onFocus={() => setFocused(prev => ({ ...prev, regNumber: true }))}
+                    onBlur={() => setFocused(prev => ({ ...prev, regNumber: false }))}
+                  />
+                  <label className="floating-label" htmlFor="reg-regnumber">Registration Number (e.g. 21105128001)</label>
+                  {form.regNumber && !errors.regNumber && (
+                    <div className="input-trailing-box"><CheckCircle2 size={15} color="var(--color-success)" /></div>
+                  )}
+                </div>
+                {errors.regNumber && <span className="validation-status-text invalid"><AlertCircle size={12} /> {errors.regNumber}</span>}
+              </div>
+
+              {/* Branch Selection */}
+              <div className="form-group">
+                <div className={`floating-input-wrapper ${focused.branch ? 'focused' : ''} ${form.branch ? 'has-value' : ''}`}>
+                  <GraduationCap size={18} className="input-leading-icon" />
+                  <select
+                    id="reg-branch"
+                    name="branch"
+                    className={`form-input${errors.branch ? ' error' : ''}`}
+                    value={form.branch}
+                    onChange={handleChange}
+                    onFocus={() => setFocused(prev => ({ ...prev, branch: true }))}
+                    onBlur={() => setFocused(prev => ({ ...prev, branch: false }))}
+                    style={{ paddingTop: form.branch ? '1.25rem' : '0.7rem' }}
+                  >
+                    <option value="">Select Engineering Branch</option>
+                    {BRANCHES.map(b => (
+                      <option key={b} value={b}>{b}</option>
+                    ))}
+                  </select>
+                  {form.branch && (
+                    <label className="floating-label" htmlFor="reg-branch" style={{ top: '0.65rem', transform: 'translateY(0)', fontSize: '0.675rem' }}>
+                      Engineering Branch
+                    </label>
+                  )}
+                </div>
+                {errors.branch && <span className="validation-status-text invalid"><AlertCircle size={12} /> {errors.branch}</span>}
+              </div>
+
+              {/* Batch Selection */}
+              <div className="form-group full">
+                <div className={`floating-input-wrapper ${focused.batch ? 'focused' : ''} ${form.batch ? 'has-value' : ''}`}>
+                  <Calendar size={18} className="input-leading-icon" />
+                  <select
+                    id="reg-batch"
+                    name="batch"
+                    className={`form-input${errors.batch ? ' error' : ''}`}
+                    value={form.batch}
+                    onChange={handleChange}
+                    onFocus={() => setFocused(prev => ({ ...prev, batch: true }))}
+                    onBlur={() => setFocused(prev => ({ ...prev, batch: false }))}
+                    style={{ paddingTop: form.batch ? '1.25rem' : '0.7rem' }}
+                  >
+                    <option value="">Select Graduation Batch</option>
+                    {BATCHES.map(b => (
+                      <option key={b} value={b}>{b}</option>
+                    ))}
+                  </select>
+                  {form.batch && (
+                    <label className="floating-label" htmlFor="reg-batch" style={{ top: '0.65rem', transform: 'translateY(0)', fontSize: '0.675rem' }}>
+                      Graduation Batch
+                    </label>
+                  )}
+                </div>
+                {errors.batch && <span className="validation-status-text invalid"><AlertCircle size={12} /> {errors.batch}</span>}
+              </div>
+            </div>
+
+            {/* SECTION 3: ACCOUNT SECURITY */}
+            <div className="auth-section-divider">
+              <span className="auth-section-divider-title">3. Account Security</span>
+            </div>
+
+            <div className="form-grid-2">
+              {/* Password */}
+              <div className="form-group full">
+                <div className={`floating-input-wrapper ${focused.password ? 'focused' : ''} ${form.password ? 'has-value' : ''}`}>
+                  <Lock size={18} className="input-leading-icon" />
+                  <input
+                    id="reg-password"
+                    name="password"
+                    type={showPass ? 'text' : 'password'}
+                    className={`form-input${errors.password ? ' error' : ''}`}
+                    value={form.password}
+                    onChange={handleChange}
+                    onKeyDown={handleKeyDown}
+                    onFocus={() => setFocused(prev => ({ ...prev, password: true }))}
+                    onBlur={() => setFocused(prev => ({ ...prev, password: false }))}
+                    autoComplete="new-password"
+                  />
+                  <label className="floating-label" htmlFor="reg-password">Password</label>
+
+                  <div className="input-trailing-box">
+                    <button
+                      type="button"
+                      className="input-action-toggle"
+                      onClick={() => setShowPass(p => !p)}
+                    >
+                      {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
-                  <span className="password-strength-text" style={{ color: strength.color }}>
-                    Password Strength: {strength.label}
+                </div>
+
+                {capsLockOn && <div className="caps-lock-warning">⚠️ Caps Lock is ON</div>}
+
+                {/* Password Requirements Checklist */}
+                <div className="password-req-list">
+                  <span className={`password-req-item ${reqMin8 ? 'met' : ''}`}>
+                    {reqMin8 ? '✓' : '•'} Min 8 characters
+                  </span>
+                  <span className={`password-req-item ${reqUpper ? 'met' : ''}`}>
+                    {reqUpper ? '✓' : '•'} One uppercase
+                  </span>
+                  <span className={`password-req-item ${reqNum ? 'met' : ''}`}>
+                    {reqNum ? '✓' : '•'} One number
+                  </span>
+                  <span className={`password-req-item ${reqSpec ? 'met' : ''}`}>
+                    {reqSpec ? '✓' : '•'} One special char
                   </span>
                 </div>
-              )}
-            </div>
-
-            {/* Confirm Password */}
-            <div className="form-group full">
-              <label className="form-label" htmlFor="reg-confirm-password">Confirm Password *</label>
-              <div className="input-wrapper">
-                <input
-                  id="reg-confirm-password"
-                  name="confirmPassword"
-                  type={showConf ? 'text' : 'password'}
-                  className={`form-input${errors.confirmPassword ? ' error' : ''}`}
-                  placeholder="Re-enter password"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  autoComplete="new-password"
-                />
-                <button
-                  type="button"
-                  className="input-toggle-btn"
-                  onClick={() => setShowConf(p => !p)}
-                  aria-label={showConf ? 'Hide password' : 'Show password'}
-                >
-                  {showConf ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
               </div>
-              {errors.confirmPassword && <span className="form-error">{errors.confirmPassword}</span>}
-              {form.confirmPassword && !errors.confirmPassword && form.password === form.confirmPassword && (
-                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-success)', fontWeight: 500 }}>
-                  ✓ Passwords match
-                </span>
-              )}
+
+              {/* Confirm Password */}
+              <div className="form-group full">
+                <div className={`floating-input-wrapper ${focused.confirmPassword ? 'focused' : ''} ${form.confirmPassword ? 'has-value' : ''}`}>
+                  <Lock size={18} className="input-leading-icon" />
+                  <input
+                    id="reg-confirm-password"
+                    name="confirmPassword"
+                    type={showConf ? 'text' : 'password'}
+                    className={`form-input${errors.confirmPassword ? ' error' : ''}`}
+                    value={form.confirmPassword}
+                    onChange={handleChange}
+                    onFocus={() => setFocused(prev => ({ ...prev, confirmPassword: true }))}
+                    onBlur={() => setFocused(prev => ({ ...prev, confirmPassword: false }))}
+                    autoComplete="new-password"
+                  />
+                  <label className="floating-label" htmlFor="reg-confirm-password">Confirm Password</label>
+
+                  <div className="input-trailing-box">
+                    <button
+                      type="button"
+                      className="input-action-toggle"
+                      onClick={() => setShowConf(p => !p)}
+                    >
+                      {showConf ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+
+                {errors.confirmPassword && (
+                  <span className="validation-status-text invalid"><AlertCircle size={12} /> {errors.confirmPassword}</span>
+                )}
+                {form.confirmPassword && !errors.confirmPassword && form.password === form.confirmPassword && (
+                  <span className="validation-status-text valid"><CheckCircle2 size={12} /> Passwords match</span>
+                )}
+              </div>
             </div>
 
+            {/* Submit Button */}
+            <button
+              id="student-register-submit-btn"
+              type="submit"
+              className="btn btn-primary btn-lg"
+              disabled={loadingState !== 'idle'}
+              style={{ width: '100%', marginTop: '1.25rem' }}
+            >
+              {loadingState === 'creating' ? (
+                <>
+                  <span className="btn-spinner" />
+                  <span>Creating Candidate Account...</span>
+                </>
+              ) : (
+                <>
+                  <span>Create Candidate Account</span>
+                  <ArrowRight size={18} />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Footer */}
+          <div className="auth-footer-links">
+            <p>
+              Already have a candidate account?{' '}
+              <Link to="/login/student" style={{ color: 'var(--color-primary-light)', fontWeight: 600 }}>
+                Sign in to Student Portal →
+              </Link>
+            </p>
           </div>
-
-          <button
-            id="student-register-submit-btn"
-            type="submit"
-            className="btn btn-primary auth-submit-btn"
-            style={{ background: 'linear-gradient(135deg, #2563eb, #1d4ed8)' }}
-          >
-            Create Candidate Account
-          </button>
-        </form>
-
-        <div className="auth-footer-links">
-          <p>
-            Already registered? <Link to="/login/student">Log in to Student Portal</Link>
-          </p>
-        </div>
-      </div>
+        </motion.div>
+      </main>
     </div>
   );
 }

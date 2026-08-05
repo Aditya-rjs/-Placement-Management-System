@@ -1,134 +1,207 @@
 /**
  * AdminLogin.jsx
- * Technical Admin Portal Authentication Page.
+ * Redesigned Split-Screen Administrator Portal Authentication Page.
  */
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Shield, ArrowLeft, Eye, EyeOff, Lock, Mail, Building2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Shield, Mail, Lock, Eye, EyeOff, ArrowRight, CheckCircle2, AlertCircle, HelpCircle } from 'lucide-react';
 import { APP_CONFIG } from '../config/app.config';
+import AuthLeftPanel from '../components/AuthLeftPanel';
+import LNJPITLogo from '../components/LNJPITLogo';
 import '../styles/Auth.css';
-
-const INITIAL_STATE = { email: '', password: '' };
-const INITIAL_ERRORS = { email: '', password: '' };
 
 function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export default function AdminLogin() {
-  const [form, setForm]         = useState(INITIAL_STATE);
-  const [errors, setErrors]     = useState(INITIAL_ERRORS);
-  const [showPass, setShowPass] = useState(false);
+  const [form, setForm]               = useState({ email: '', password: '', rememberMe: false });
+  const [errors, setErrors]           = useState({ email: '', password: '' });
+  const [focused, setFocused]         = useState({ email: false, password: false });
+  const [showPass, setShowPass]       = useState(false);
+  const [capsLockOn, setCapsLockOn]   = useState(false);
+  const [loadingState, setLoadingState] = useState('idle');
+
+  useEffect(() => {
+    document.title = `Admin Portal | ${APP_CONFIG.collegeName}`;
+  }, []);
+
+  const handleKeyDown = (e) => {
+    if (e.getModifierState) {
+      setCapsLockOn(e.getModifierState('CapsLock'));
+    }
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    const val = type === 'checkbox' ? checked : value;
+    setForm(prev => ({ ...prev, [name]: val }));
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const validate = () => {
-    const newErrors = { ...INITIAL_ERRORS };
-    if (!form.email)                    newErrors.email = 'Administrator email is required.';
-    else if (!validateEmail(form.email)) newErrors.email = 'Enter a valid administrator email.';
-    if (!form.password)                 newErrors.password = 'Password is required.';
-    else if (form.password.length < 6)  newErrors.password = 'Password must be at least 6 characters.';
+    const newErrors = {};
+    if (!form.email.trim()) {
+      newErrors.email = 'Administrator email address is required.';
+    } else if (!validateEmail(form.email)) {
+      newErrors.email = 'Please enter a valid administrator email address.';
+    }
+
+    if (!form.password) {
+      newErrors.password = 'Password is required.';
+    } else if (form.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters.';
+    }
+
     setErrors(newErrors);
-    return !Object.values(newErrors).some(Boolean);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (validate()) {
-      alert('Admin credentials submitted for verification (Backend auth enabled in Module 5).');
-    }
+    if (!validate()) return;
+
+    setLoadingState('authenticating');
+
+    setTimeout(() => {
+      setLoadingState('success');
+      setTimeout(() => {
+        alert('Administrator authentication verified successfully (Backend integration enabled in Module 5).');
+        setLoadingState('idle');
+      }, 1000);
+    }, 1200);
   };
 
   return (
-    <div className="auth-page" id="admin-login-page">
-      <div className="auth-card">
+    <div className="auth-split-container" id="admin-login-page">
+      <AuthLeftPanel portalTitle="System Admin Control Center" />
 
-        <Link to="/" className="auth-back-link">
-          <ArrowLeft size={16} /> Back to Overview
-        </Link>
-
-        <div className="auth-card-header">
-          <div className="auth-card-icon-badge admin">
-            <Shield size={26} />
-          </div>
-          <div className="auth-college-tag">
-            <Building2 size={13} /> {APP_CONFIG.collegeName}
-          </div>
-          <h1 className="auth-card-title">Admin Control Portal</h1>
-          <p className="auth-card-subtitle">
-            System administration &amp; enterprise security controls
-          </p>
-        </div>
-
-        <form
-          id="admin-login-form"
-          className="auth-form"
-          onSubmit={handleSubmit}
-          noValidate
+      <main className="auth-right-panel" role="main">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="auth-card-modern"
         >
-          {/* Email */}
-          <div className="form-group">
-            <label className="form-label" htmlFor="admin-email">Admin Email</label>
-            <input
-              id="admin-email"
-              name="email"
-              type="email"
-              className={`form-input${errors.email ? ' error' : ''}`}
-              placeholder="admin@xyztech.edu.in"
-              value={form.email}
-              onChange={handleChange}
-              autoComplete="email"
-            />
-            {errors.email && <span className="form-error">{errors.email}</span>}
-          </div>
+          {/* Header */}
+          <div className="auth-institution-header">
+            <span className="auth-portal-type-badge admin">
+              <Shield size={14} /> Administrator
+            </span>
 
-          {/* Password */}
-          <div className="form-group">
-            <label className="form-label" htmlFor="admin-password">Password</label>
-            <div className="input-wrapper">
-              <input
-                id="admin-password"
-                name="password"
-                type={showPass ? 'text' : 'password'}
-                className={`form-input${errors.password ? ' error' : ''}`}
-                placeholder="••••••••••••"
-                value={form.password}
-                onChange={handleChange}
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                className="input-toggle-btn"
-                onClick={() => setShowPass(p => !p)}
-                aria-label={showPass ? 'Hide password' : 'Show password'}
-              >
-                {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+              <LNJPITLogo size={36} />
             </div>
-            {errors.password && <span className="form-error">{errors.password}</span>}
+
+            <h2 className="auth-card-main-title">Admin Control Portal</h2>
+            <p className="auth-card-main-sub">
+              System Administration &amp; Security Console
+            </p>
           </div>
 
-          <button
-            id="admin-login-submit-btn"
-            type="submit"
-            className="btn btn-primary auth-submit-btn"
-            style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)' }}
-          >
-            <Lock size={16} /> Authenticate Admin
-          </button>
-        </form>
+          <form id="admin-login-form" onSubmit={handleSubmit} noValidate>
+            {/* Admin Email */}
+            <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+              <div className={`floating-input-wrapper ${focused.email ? 'focused' : ''} ${form.email ? 'has-value' : ''}`}>
+                <Mail size={18} className="input-leading-icon" />
+                <input
+                  id="admin-email"
+                  name="email"
+                  type="email"
+                  className={`form-input${errors.email ? ' error' : ''}`}
+                  value={form.email}
+                  onChange={handleChange}
+                  onFocus={() => setFocused(prev => ({ ...prev, email: true }))}
+                  onBlur={() => setFocused(prev => ({ ...prev, email: false }))}
+                  autoComplete="email"
+                  aria-invalid={!!errors.email}
+                />
+                <label className="floating-label" htmlFor="admin-email">Admin Email (e.g. admin@lnjpit.ac.in)</label>
+                {form.email && validateEmail(form.email) && (
+                  <div className="input-trailing-box"><CheckCircle2 size={16} color="var(--color-success)" /></div>
+                )}
+              </div>
+              {errors.email && <span className="validation-status-text invalid" role="alert"><AlertCircle size={13} /> {errors.email}</span>}
+            </div>
 
-        <div className="auth-footer-links">
-          <p>
-            Authorized access only. <Link to="/">Return to main page</Link>
-          </p>
-        </div>
-      </div>
+            {/* Password */}
+            <div className="form-group" style={{ marginBottom: '1rem' }}>
+              <div className={`floating-input-wrapper ${focused.password ? 'focused' : ''} ${form.password ? 'has-value' : ''}`}>
+                <Lock size={18} className="input-leading-icon" />
+                <input
+                  id="admin-password"
+                  name="password"
+                  type={showPass ? 'text' : 'password'}
+                  className={`form-input${errors.password ? ' error' : ''}`}
+                  value={form.password}
+                  onChange={handleChange}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => setFocused(prev => ({ ...prev, password: true }))}
+                  onBlur={() => setFocused(prev => ({ ...prev, password: false }))}
+                  autoComplete="current-password"
+                  aria-invalid={!!errors.password}
+                />
+                <label className="floating-label" htmlFor="admin-password">Account Password</label>
+                <div className="input-trailing-box">
+                  <button type="button" className="input-action-toggle" onClick={() => setShowPass(prev => !prev)}>
+                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+              {capsLockOn && <div className="caps-lock-warning">⚠️ Caps Lock is ON</div>}
+              {errors.password && <span className="validation-status-text invalid" role="alert"><AlertCircle size={13} /> {errors.password}</span>}
+            </div>
+
+            {/* Extra Row */}
+            <div className="auth-extra-row" style={{ marginBottom: '1.5rem' }}>
+              <label className="custom-checkbox-label">
+                <input type="checkbox" name="rememberMe" checked={form.rememberMe} onChange={handleChange} />
+                <span>Remember me</span>
+              </label>
+              <a href="#forgot" className="auth-forgot-link" onClick={e => { e.preventDefault(); alert('Administrator password resets require direct database access or super-admin key.'); }}>
+                Forgot Password?
+              </a>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              id="admin-login-submit-btn"
+              type="submit"
+              className="btn btn-primary btn-lg"
+              disabled={loadingState !== 'idle'}
+              style={{ width: '100%', background: 'linear-gradient(135deg, #ef4444, #dc2626)' }}
+            >
+              {loadingState === 'authenticating' && (
+                <>
+                  <span className="btn-spinner" />
+                  <span>Authenticating...</span>
+                </>
+              )}
+              {loadingState === 'success' && (
+                <>
+                  <CheckCircle2 size={18} />
+                  <span>Authenticated! Redirecting...</span>
+                </>
+              )}
+              {loadingState === 'idle' && (
+                <>
+                  <span>Authenticate Admin</span>
+                  <ArrowRight size={18} />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Footer Links */}
+          <div className="auth-footer-links">
+            <p>
+              Authorized access only. <Link to="/">Return to Overview</Link>
+            </p>
+          </div>
+        </motion.div>
+      </main>
     </div>
   );
 }
