@@ -29,8 +29,6 @@ const PORTALS = [
     iconClass: 'admin',
     title: 'Admin Portal',
     desc: 'System Administration & Security',
-    headerTitle: 'Admin Authentication',
-    headerSub: 'System Administration & Security Console',
   },
   {
     id: 'tpo',
@@ -38,8 +36,6 @@ const PORTALS = [
     iconClass: 'tpo',
     title: 'TPO Portal',
     desc: 'Training & Placement Officer',
-    headerTitle: 'TPO Officer Authentication',
-    headerSub: 'Training & Placement Office Management Console',
   },
   {
     id: 'student',
@@ -47,16 +43,8 @@ const PORTALS = [
     iconClass: 'student',
     title: 'Student Portal',
     desc: 'Student Login & Registration',
-    headerTitle: 'Student Career Portal',
-    headerSub: 'Sign in to access placement drives & applications',
   },
 ];
-
-// Student sub-view header overrides
-const STUDENT_REGISTER_HEADER = {
-  headerTitle: 'Student Registration',
-  headerSub: 'Create your candidate profile for campus recruitment',
-};
 
 // ── Animation Variants ────────────────────────────────────────────────────
 const contentVariants = {
@@ -89,10 +77,9 @@ export default function AuthWorkspace({ initialPortal: defaultPortal = 'student'
 
   useEffect(() => {
     const portal = PORTALS.find(p => p.id === activePortal);
-    const isRegister = activePortal === 'student' && studentView === 'register';
-    const title = isRegister
-      ? STUDENT_REGISTER_HEADER.headerTitle
-      : portal?.headerTitle || 'Authentication';
+    const title = activePortal === 'student' && studentView === 'register'
+      ? 'Student Registration'
+      : portal?.title || 'Authentication';
     document.title = `${title} | ${APP_CONFIG.collegeName}`;
   }, [activePortal, studentView]);
 
@@ -106,12 +93,6 @@ export default function AuthWorkspace({ initialPortal: defaultPortal = 'student'
   // Student sub-view toggles
   const handleSwitchToRegister = () => setStudentView('register');
   const handleSwitchToLogin = () => setStudentView('login');
-
-  // Determine current header text
-  const currentPortal = PORTALS.find(p => p.id === activePortal);
-  const isStudentRegister = activePortal === 'student' && studentView === 'register';
-  const headerTitle = isStudentRegister ? STUDENT_REGISTER_HEADER.headerTitle : currentPortal.headerTitle;
-  const headerSub = isStudentRegister ? STUDENT_REGISTER_HEADER.headerSub : currentPortal.headerSub;
 
   // AnimatePresence key: includes studentView for student portal
   const contentKey = activePortal === 'student' ? `student-${studentView}` : activePortal;
@@ -189,22 +170,6 @@ export default function AuthWorkspace({ initialPortal: defaultPortal = 'student'
 
       {/* ══ RIGHT CONTENT PANEL ══════════════════════════════════════════ */}
       <main className="auth-workspace-content" role="main">
-        {/* Dynamic Header */}
-        <div className="auth-workspace-content-header">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={contentKey + '-header'}
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              transition={{ duration: 0.2 }}
-            >
-              <h1 className="auth-workspace-content-header-title">{headerTitle}</h1>
-              <p className="auth-workspace-content-header-sub">{headerSub}</p>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
         {/* Dynamic Form Content */}
         <div className="auth-workspace-content-body" id="auth-workspace-content-body" role="tabpanel">
           <AnimatePresence mode="wait">

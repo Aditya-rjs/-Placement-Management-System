@@ -420,65 +420,7 @@ export default function Home({ onOpenAuth }) {
         </div>
       </section>
 
-      {/* ══ AUTHENTICATION PORTAL SECTION ════════════════════════════════ */}
-      <section id="login-portals" className="section portals-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-tag">Secure Access</span>
-            <h2 className="section-title">Authentication Portal</h2>
-            <p className="section-subtitle">
-              Access role-based login for Administrators, TPO Officers, and Students.
-            </p>
-          </div>
 
-          <motion.div
-            whileHover={{ y: -4, transition: { duration: 0.25 } }}
-            className="auth-portal-launch-card"
-            id="auth-portal-launch-card"
-            onClick={() => onOpenAuth && onOpenAuth('student')}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === 'Enter' && onOpenAuth && onOpenAuth('student')}
-          >
-            {/* Top glow accent */}
-            <div className="auth-launch-glow" />
-
-            <div className="auth-launch-header">
-              <div className="auth-launch-icon">
-                <Lock size={28} strokeWidth={2} />
-              </div>
-              <div>
-                <h3 className="auth-launch-title">Authentication Workspace</h3>
-                <p className="auth-launch-sub">Unified login portal for all user roles</p>
-              </div>
-            </div>
-
-            <p className="auth-launch-desc">
-              Securely sign in to your authorized portal — Admin, TPO Officer, or Student.
-              Role-based access controls ensure only verified users can access their respective dashboards.
-            </p>
-
-            {/* Portal badges */}
-            <div className="auth-launch-badges">
-              <span className="auth-launch-badge admin">
-                <Shield size={14} /> Administrator
-              </span>
-              <span className="auth-launch-badge tpo">
-                <GraduationCap size={14} /> TPO Officer
-              </span>
-              <span className="auth-launch-badge student">
-                <UserCheck size={14} /> Student
-              </span>
-            </div>
-
-            {/* CTA */}
-            <div className="auth-launch-cta">
-              <span>Open Authentication Workspace</span>
-              <ArrowRight size={18} />
-            </div>
-          </motion.div>
-        </div>
-      </section>
 
       {/* ══ PROBLEM STATEMENT SECTION ═══════════════════════════════════════ */}
       <section id="problem-statement" className="section problem-section">

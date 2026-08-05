@@ -294,32 +294,13 @@
   overflow-y: auto;
 }
 
-/* Dynamic Header */
-.auth-workspace-content-header {
-  padding: 2rem 3rem 0;
-  text-align: left;
-}
-
-.auth-workspace-content-header-title {
-  font-size: clamp(1.5rem, 2.5vw, 1.85rem);
-  font-weight: 800;
-  color: var(--color-text);
-  letter-spacing: -0.02em;
-  margin-bottom: 0.25rem;
-}
-
-.auth-workspace-content-header-sub {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-/* Content Body (Centers the form card) */
+/* Content Body (Centers the form card cleanly) */
 .auth-workspace-content-body {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 3rem 3rem;
+  padding: 2.5rem 2rem;
   position: relative;
 }
 
