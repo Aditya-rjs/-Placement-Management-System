@@ -51,7 +51,6 @@ export const APP_CONFIG = {
     college: 'Loknayak Jai Prakash Institute of Technology (LNJPIT)',
     branch: 'Computer Science & Engineering',
     batch: '2021 – 2025',
-    regNo: '21105128001',
     bio: `Final-year Computer Science & Engineering undergraduate at Loknayak Jai Prakash Institute of Technology. Architected and engineered this enterprise-grade Placement Management System as a capstone project to digitize campus recruitment drives, automate candidate eligibility evaluation, and deliver real-time placement intelligence.`,
     github: 'https://github.com/Aditya-rjs/-Placement-Management-System',
     linkedin: 'https://linkedin.com/in/adityarajsingh',

@@ -697,7 +697,7 @@ export default function Home() {
                 <h3 className="dev-name-heading">{APP_CONFIG.developer.name}</h3>
                 <p className="dev-tagline-text">{APP_CONFIG.developer.tagline}</p>
                 <span className="dev-reg-number">
-                  {APP_CONFIG.developer.college} • <span className="mono-badge">Reg: {APP_CONFIG.developer.regNo}</span>
+                  {APP_CONFIG.developer.college}
                 </span>
               </div>
             </div>
