@@ -18,7 +18,6 @@ import '../styles/Navbar.css';
 
 const NAV_LINKS = [
   { id: 'hero',              label: 'Overview',     href: '#hero' },
-  { id: 'login-portals',     label: 'Portals',      href: '#login-portals' },
   { id: 'problem-statement', label: 'Why PMS',      href: '#problem-statement' },
   { id: 'workflow',          label: 'Workflow',     href: '#workflow' },
   { id: 'features',          label: 'Features',     href: '#features' },
@@ -27,7 +26,7 @@ const NAV_LINKS = [
   { id: 'about-developer',   label: 'Developer',    href: '#about-developer' },
 ];
 
-export default function Navbar({ isDark, onToggleTheme }) {
+export default function Navbar({ isDark, onToggleTheme, onOpenAuth }) {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
@@ -65,6 +64,14 @@ export default function Navbar({ isDark, onToggleTheme }) {
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
+
+  const handleOpenAuthClick = (e, portal = 'student') => {
+    if (onOpenAuth) {
+      e.preventDefault();
+      setMenuOpen(false);
+      onOpenAuth(portal);
+    }
+  };
 
   return (
     <>
@@ -111,10 +118,15 @@ export default function Navbar({ isDark, onToggleTheme }) {
           {/* Header Right Actions */}
           <div className="navbar-actions">
             <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
-            <Link to="/login/student" className="btn btn-primary btn-sm navbar-cta-btn" id="nav-student-login-btn">
-              <span>Student Portal</span>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm navbar-cta-btn"
+              id="nav-student-login-btn"
+              onClick={e => handleOpenAuthClick(e, 'student')}
+            >
+              <span>Authentication Workspace</span>
               <ChevronRight size={14} />
-            </Link>
+            </button>
 
             {/* Mobile Drawer Hamburger Button */}
             <button
@@ -156,15 +168,15 @@ export default function Navbar({ isDark, onToggleTheme }) {
             </ul>
             <div className="navbar-mobile-actions">
               <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
-              <Link
-                to="/login/student"
+              <button
+                type="button"
                 className="btn btn-primary btn-sm"
                 style={{ width: '100%' }}
-                onClick={() => setMenuOpen(false)}
+                onClick={e => handleOpenAuthClick(e, 'student')}
                 id="mobile-student-login-btn"
               >
-                Student Portal Log In
-              </Link>
+                Open Authentication Workspace
+              </button>
             </div>
           </motion.div>
         )}
