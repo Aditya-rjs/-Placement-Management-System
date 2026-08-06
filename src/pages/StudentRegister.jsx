@@ -337,7 +337,7 @@ export default function StudentRegister() {
               </div>
 
               {/* Branch Selection */}
-              <div className="form-group">
+              <div className="form-group full">
                 <div className={`floating-input-wrapper ${focused.branch ? 'focused' : ''} ${form.branch ? 'has-value' : ''}`}>
                   <GraduationCap size={18} className="input-leading-icon" />
                   <select
