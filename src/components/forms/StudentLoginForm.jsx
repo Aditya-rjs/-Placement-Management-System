@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle2, HelpCircle, UserCheck } from 'lucide-react';
-import { APP_CONFIG } from '../../config/app.config';
-import LNJPITLogo from '../LNJPITLogo';
 import '../../styles/Auth.css';
 
 function validateEmail(email) {
@@ -65,21 +63,6 @@ export default function StudentLoginForm({ onSwitchToRegister }) {
 
   return (
     <div className="auth-card-modern">
-      <div className="auth-institution-header">
-        <span className="auth-portal-type-badge student">
-          <UserCheck size={14} /> Student Candidate Portal
-        </span>
-
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
-          <LNJPITLogo size={36} />
-        </div>
-
-        <h2 className="auth-card-main-title">Log in to Your Portal</h2>
-        <p className="auth-card-main-sub">
-          Training &amp; Placement Cell • {APP_CONFIG.collegeName}
-        </p>
-      </div>
-
       <form id="student-login-form" onSubmit={handleSubmit} noValidate>
         <div className="form-group" style={{ marginBottom: '1.25rem' }}>
           <div

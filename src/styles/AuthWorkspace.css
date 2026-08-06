@@ -77,32 +77,36 @@
   margin-bottom: 2rem;
 }
 
-.auth-workspace-nav-header-logo {
+/* ── Nav Brand Block (Logo + College Name + System Name) ─── */
+.auth-workspace-nav-brand {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
+  align-items: flex-start;
+  gap: 0.9rem;
+  margin-bottom: 1.75rem;
 }
 
-.auth-workspace-nav-header-logo-text {
+.auth-workspace-nav-brand-text {
   display: flex;
   flex-direction: column;
+  gap: 0.2rem;
+  padding-top: 0.1rem;
 }
 
-.auth-workspace-nav-header-logo-text .institution-name {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  line-height: 1.3;
+.auth-workspace-nav-brand-text .institution-full-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  font-family: var(--font-heading);
 }
 
-.auth-workspace-nav-header-logo-text .system-name {
-  font-size: 0.68rem;
+.auth-workspace-nav-brand-text .institution-system-name {
+  font-size: 0.65rem;
   color: var(--color-text-muted);
   font-weight: 500;
+  letter-spacing: 0.01em;
+  margin-top: 0.05rem;
 }
 
 .auth-workspace-nav-section-label {
@@ -414,6 +418,7 @@
   z-index: 0;
 }
 
+/* Content Body (Centers the form card cleanly) */
 .auth-workspace-content-body {
   flex: 1;
   display: flex;
@@ -422,6 +427,30 @@
   padding: 3rem 2rem;
   position: relative;
   z-index: 1;
+}
+
+/* ── Right Panel: Context Page Title ─────────────────────── */
+.auth-workspace-page-title {
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+}
+
+.auth-workspace-page-title h1 {
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-heading);
+}
+
+.auth-workspace-page-title p {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+  margin: 0;
 }
 
 /* Ambient glow orb 2 via a pseudo element on body to save DOM nodes */
@@ -465,7 +494,7 @@
     margin-bottom: 0.75rem;
   }
 
-  .auth-workspace-nav-header-logo {
+  .auth-workspace-nav-brand {
     margin-bottom: 0.75rem;
   }
 
@@ -562,13 +591,18 @@
     min-height: unset;
   }
 
-  .auth-workspace-content-header {
-    padding: 1.5rem 1.25rem 0;
-    text-align: center;
-  }
-
   .auth-workspace-content-body {
     padding: 1.25rem 1rem 2rem;
+    align-items: flex-start;
+  }
+
+  .auth-workspace-page-title {
+    max-width: 100%;
+    padding: 0 0.5rem;
+  }
+
+  .auth-workspace-page-title h1 {
+    font-size: 1.35rem;
   }
 }
 

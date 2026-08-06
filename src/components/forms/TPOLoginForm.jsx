@@ -6,8 +6,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, CheckCircle2, AlertCircle, GraduationCap } from 'lucide-react';
-import { APP_CONFIG } from '../../config/app.config';
-import LNJPITLogo from '../LNJPITLogo';
 import '../../styles/Auth.css';
 
 function validateEmail(email) {
@@ -70,22 +68,6 @@ export default function TPOLoginForm() {
 
   return (
     <div className="auth-card-modern">
-      {/* Header */}
-      <div className="auth-institution-header">
-        <span className="auth-portal-type-badge tpo">
-          <GraduationCap size={14} /> Placement Cell
-        </span>
-
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
-          <LNJPITLogo size={36} />
-        </div>
-
-        <h2 className="auth-card-main-title">TPO Officer Portal</h2>
-        <p className="auth-card-main-sub">
-          Training &amp; Placement Office Management Console
-        </p>
-      </div>
-
       <form id="tpo-login-form" onSubmit={handleSubmit} noValidate>
         {/* Officer Email */}
         <div className="form-group" style={{ marginBottom: '1.25rem' }}>

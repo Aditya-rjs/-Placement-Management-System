@@ -8,7 +8,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, GraduationCap, UserCheck, ArrowLeft } from 'lucide-react';
+import { Shield, GraduationCap, UserCheck, ArrowLeft, Lock } from 'lucide-react';
 import { APP_CONFIG } from '../config/app.config';
 import LNJPITLogo from '../components/LNJPITLogo';
 
@@ -45,6 +45,26 @@ const PORTALS = [
     desc: 'Student Login & Registration',
   },
 ];
+
+// ── Right Panel Context Titles ────────────────────────────────────────────
+const PORTAL_CONTENT = {
+  admin: {
+    title: 'System Administrator Login',
+    subtitle: 'Access the institutional administration console.',
+  },
+  tpo: {
+    title: 'Training & Placement Officer Login',
+    subtitle: 'Manage campus recruitment, recruiters, and placement operations.',
+  },
+  'student-login': {
+    title: 'Student Career Portal',
+    subtitle: 'Sign in to access placement drives, applications, and career services.',
+  },
+  'student-register': {
+    title: 'Student Registration',
+    subtitle: 'Create your placement profile and register for campus recruitment.',
+  },
+};
 
 // ── Animation Variants ────────────────────────────────────────────────────
 const contentVariants = {
@@ -97,17 +117,23 @@ export default function AuthWorkspace({ initialPortal: defaultPortal = 'student'
   // AnimatePresence key: includes studentView for student portal
   const contentKey = activePortal === 'student' ? `student-${studentView}` : activePortal;
 
+  // Derive right-panel content key for PORTAL_CONTENT lookup
+  const portalContentKey = activePortal === 'student'
+    ? `student-${studentView}`
+    : activePortal;
+  const { title: pageTitle, subtitle: pageSubtitle } = PORTAL_CONTENT[portalContentKey] || {};
+
   return (
     <div className="auth-workspace" id="auth-workspace-page">
       {/* ══ LEFT NAVIGATION PANEL ════════════════════════════════════════ */}
       <nav className="auth-workspace-nav" aria-label="Authentication portal selection">
-        {/* Header: Logo + Institution */}
+        {/* Header: Brand block — logo → college name → system name */}
         <div className="auth-workspace-nav-header">
-          <div className="auth-workspace-nav-header-logo">
-            <LNJPITLogo size={34} />
-            <div className="auth-workspace-nav-header-logo-text">
-              <span className="institution-name">{APP_CONFIG.collegeShortName}</span>
-              <span className="system-name">Placement Management System</span>
+          <div className="auth-workspace-nav-brand">
+            <LNJPITLogo size={40} />
+            <div className="auth-workspace-nav-brand-text">
+              <span className="institution-full-name">Loknayak Jai Prakash Institute of Technology, Chapra</span>
+              <span className="institution-system-name">Placement Management System</span>
             </div>
           </div>
 
@@ -180,8 +206,17 @@ export default function AuthWorkspace({ initialPortal: defaultPortal = 'student'
               animate="animate"
               exit="exit"
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+              style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.75rem' }}
             >
+              {/* ── Context-sensitive page title ── */}
+              {pageTitle && (
+                <div className="auth-workspace-page-title" aria-live="polite">
+                  <h1>{pageTitle}</h1>
+                  {pageSubtitle && <p>{pageSubtitle}</p>}
+                </div>
+              )}
+
+              {/* ── Authentication form card ── */}
               {activePortal === 'admin' && <AdminLoginForm />}
               {activePortal === 'tpo' && <TPOLoginForm />}
               {activePortal === 'student' && studentView === 'login' && (

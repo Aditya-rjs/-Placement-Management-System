@@ -16,8 +16,6 @@ import {
   ArrowRight,
   UserPlus
 } from 'lucide-react';
-import { APP_CONFIG } from '../../config/app.config';
-import LNJPITLogo from '../LNJPITLogo';
 import '../../styles/Auth.css';
 
 const BRANCHES = [
@@ -455,21 +453,6 @@ export default function StudentRegisterForm({ onSwitchToLogin }) {
 
   return (
     <div className="auth-card-modern">
-      <div className="auth-institution-header">
-        <span className="auth-portal-type-badge student">
-          <UserPlus size={14} /> Student Candidate Registration
-        </span>
-
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
-          <LNJPITLogo size={36} />
-        </div>
-
-        <h2 className="auth-card-main-title">{STEPS[currentStep].label}</h2>
-        <p className="auth-card-main-sub">
-          Register for upcoming campus recruitment drives &amp; candidate verification
-        </p>
-      </div>
-
       <div className="auth-stepper" role="list">
         {STEPS.map((step, idx) => (
           <div key={step.id} className="auth-step-item" role="listitem">

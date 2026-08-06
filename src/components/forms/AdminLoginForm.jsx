@@ -6,8 +6,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, Mail, Lock, Eye, EyeOff, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
-import { APP_CONFIG } from '../../config/app.config';
-import LNJPITLogo from '../LNJPITLogo';
 import '../../styles/Auth.css';
 
 function validateEmail(email) {
@@ -70,22 +68,6 @@ export default function AdminLoginForm() {
 
   return (
     <div className="auth-card-modern">
-      {/* Header */}
-      <div className="auth-institution-header">
-        <span className="auth-portal-type-badge admin">
-          <Shield size={14} /> Administrator
-        </span>
-
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
-          <LNJPITLogo size={36} />
-        </div>
-
-        <h2 className="auth-card-main-title">Admin Control Portal</h2>
-        <p className="auth-card-main-sub">
-          System Administration &amp; Security Console
-        </p>
-      </div>
-
       <form id="admin-login-form" onSubmit={handleSubmit} noValidate>
         {/* Admin Email */}
         <div className="form-group" style={{ marginBottom: '1.25rem' }}>
