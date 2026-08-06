@@ -258,7 +258,6 @@ function ContactFormSection() {
                       name="name"
                       type="text"
                       className={`form-input${errors.name ? ' error' : ''}`}
-                      placeholder="e.g. Vikram Sharma"
                       value={formData.name}
                       onChange={handleChange}
                     />
@@ -272,7 +271,6 @@ function ContactFormSection() {
                       name="email"
                       type="email"
                       className={`form-input${errors.email ? ' error' : ''}`}
-                      placeholder="vikram@lnjpit.ac.in"
                       value={formData.email}
                       onChange={handleChange}
                     />
@@ -287,7 +285,6 @@ function ContactFormSection() {
                     name="subject"
                     type="text"
                     className={`form-input${errors.subject ? ' error' : ''}`}
-                    placeholder="e.g. Corporate Recruitment Drive Inquiry"
                     value={formData.subject}
                     onChange={handleChange}
                   />
@@ -301,7 +298,6 @@ function ContactFormSection() {
                     name="message"
                     rows={4}
                     className={`form-input${errors.message ? ' error' : ''}`}
-                    placeholder="Please describe your query in detail..."
                     value={formData.message}
                     onChange={handleChange}
                   />
