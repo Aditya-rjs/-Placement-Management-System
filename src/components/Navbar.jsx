@@ -1,19 +1,19 @@
 /**
  * Navbar.jsx
  * Enterprise Vercel/Linear-inspired Header Navigation
- * - Active section tracking with smooth animated indicator
- * - LNJPIT Official Logo & Brand
- * - Glassmorphism blur & 1px border
+ * - Active section tracking with smooth animated underline indicator
+ * - Single Primary CTA: "Open Authentication Portal →"
+ * - Compact LNJPIT Branding
+ * - Glassmorphism blur & subtle 1px border
  * - Mobile slide drawer
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronRight, Lock } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 import { APP_CONFIG, SITE_TITLE } from '../config/app.config';
 import LNJPITLogo from './LNJPITLogo';
-import ThemeToggle from './ThemeToggle';
 import '../styles/Navbar.css';
 
 const NAV_LINKS = [
@@ -26,7 +26,7 @@ const NAV_LINKS = [
   { id: 'about-developer',   label: 'Developer',    href: '#about-developer' },
 ];
 
-export default function Navbar({ isDark, onToggleTheme, onOpenAuth }) {
+export default function Navbar({ onOpenAuth }) {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
@@ -77,7 +77,7 @@ export default function Navbar({ isDark, onToggleTheme, onOpenAuth }) {
 
           {/* LNJPIT Brand & Logo */}
           <Link to="/" className="navbar-logo" aria-label={SITE_TITLE}>
-            <LNJPITLogo size={40} />
+            <LNJPITLogo size={34} />
           </Link>
 
           {/* Desktop Links with Animated Active Indicator */}
@@ -86,21 +86,21 @@ export default function Navbar({ isDark, onToggleTheme, onOpenAuth }) {
               {NAV_LINKS.map(link => {
                 const isActive = activeSection === link.id;
                 return (
-                  <li key={link.id} style={{ position: 'relative' }}>
+                  <li key={link.id} className="navbar-item">
                     <a
                       href={link.href}
-                      className={isActive ? 'active' : ''}
+                      className={`navbar-link ${isActive ? 'active' : ''}`}
                       onClick={e => { e.preventDefault(); handleNavClick(link.href, link.id); }}
                     >
-                      {link.label}
+                      <span>{link.label}</span>
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeNavIndicator"
+                          className="navbar-active-bar"
+                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        />
+                      )}
                     </a>
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeNavIndicator"
-                        className="navbar-active-bar"
-                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                      />
-                    )}
                   </li>
                 );
               })}
@@ -109,15 +109,14 @@ export default function Navbar({ isDark, onToggleTheme, onOpenAuth }) {
 
           {/* Header Right Actions */}
           <div className="navbar-actions">
-            <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
             <button
               type="button"
-              className="btn btn-primary btn-sm navbar-cta-btn"
-              id="nav-student-login-btn"
-              onClick={() => onOpenAuth && onOpenAuth('student')}
+              className="navbar-auth-btn"
+              id="nav-open-auth-btn"
+              onClick={() => onOpenAuth && onOpenAuth('student', 'login')}
             >
-              <span>Student Portal</span>
-              <ChevronRight size={14} />
+              <span>Open Authentication Portal</span>
+              <ArrowRight size={15} className="cta-arrow" />
             </button>
 
             {/* Mobile Drawer Hamburger Button */}
@@ -128,7 +127,7 @@ export default function Navbar({ isDark, onToggleTheme, onOpenAuth }) {
               aria-label="Toggle menu"
               aria-expanded={menuOpen}
             >
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
 
@@ -141,10 +140,10 @@ export default function Navbar({ isDark, onToggleTheme, onOpenAuth }) {
           <motion.div
             id="navbar-mobile-menu"
             className="navbar-mobile-menu"
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: -12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.98 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
           >
             <ul className="navbar-mobile-links" role="list">
               {NAV_LINKS.map(link => (
@@ -159,18 +158,17 @@ export default function Navbar({ isDark, onToggleTheme, onOpenAuth }) {
               ))}
             </ul>
             <div className="navbar-mobile-actions">
-              <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
               <button
                 type="button"
-                className="btn btn-primary btn-sm"
-                style={{ width: '100%' }}
+                className="navbar-auth-btn full-width"
                 onClick={() => {
                   setMenuOpen(false);
-                  if (onOpenAuth) onOpenAuth('student');
+                  if (onOpenAuth) onOpenAuth('student', 'login');
                 }}
-                id="mobile-student-login-btn"
+                id="mobile-open-auth-btn"
               >
-                Student Portal Log In
+                <span>Open Authentication Portal</span>
+                <ArrowRight size={15} className="cta-arrow" />
               </button>
             </div>
           </motion.div>

@@ -62,7 +62,7 @@ export default function MainView({ isDark, onToggleTheme }) {
             transition={slideTransition}
             style={{ minHeight: '100vh' }}
           >
-            <Navbar isDark={isDark} onToggleTheme={onToggleTheme} onOpenAuth={handleOpenAuth} />
+            <Navbar onOpenAuth={handleOpenAuth} />
             <Home onOpenAuth={handleOpenAuth} />
             <Footer />
           </motion.div>
