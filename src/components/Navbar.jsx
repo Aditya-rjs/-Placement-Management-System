@@ -1,18 +1,17 @@
 /**
  * Navbar.jsx
- * Enterprise Vercel/Linear-inspired Header Navigation
- * - Active section tracking with smooth animated underline indicator
- * - Single Primary CTA: "Open Authentication Portal →"
- * - Compact LNJPIT Branding
- * - Glassmorphism blur & subtle 1px border
+ * Enterprise Glassmorphism Header Navigation
+ * - Active section tracking with smooth animated indicator
+ * - LNJPIT Official Logo & Brand
+ * - Glassmorphism blur & 1px border
  * - Mobile slide drawer
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight } from 'lucide-react';
-import { APP_CONFIG, SITE_TITLE } from '../config/app.config';
+import { Menu, X } from 'lucide-react';
+import { SITE_TITLE } from '../config/app.config';
 import LNJPITLogo from './LNJPITLogo';
 import '../styles/Navbar.css';
 
@@ -26,7 +25,7 @@ const NAV_LINKS = [
   { id: 'about-developer',   label: 'Developer',    href: '#about-developer' },
 ];
 
-export default function Navbar({ onOpenAuth }) {
+export default function Navbar() {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
@@ -75,51 +74,40 @@ export default function Navbar({ onOpenAuth }) {
       >
         <div className="container navbar-inner">
 
-          {/* LNJPIT Brand & Logo */}
+          {/* LEFT: LNJPIT Brand & Logo */}
           <Link to="/" className="navbar-logo" aria-label={SITE_TITLE}>
-            <LNJPITLogo size={34} />
+            <LNJPITLogo size={40} />
           </Link>
 
-          {/* Desktop Links with Animated Active Indicator */}
+          {/* CENTER: Desktop Links with Animated Active Indicator */}
           {isHome && (
             <ul className="navbar-links" role="list">
               {NAV_LINKS.map(link => {
                 const isActive = activeSection === link.id;
                 return (
-                  <li key={link.id} className="navbar-item">
+                  <li key={link.id} style={{ position: 'relative' }}>
                     <a
                       href={link.href}
-                      className={`navbar-link ${isActive ? 'active' : ''}`}
+                      className={isActive ? 'active' : ''}
                       onClick={e => { e.preventDefault(); handleNavClick(link.href, link.id); }}
                     >
-                      <span>{link.label}</span>
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeNavIndicator"
-                          className="navbar-active-bar"
-                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                        />
-                      )}
+                      {link.label}
                     </a>
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeNavIndicator"
+                        className="navbar-active-bar"
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
                   </li>
                 );
               })}
             </ul>
           )}
 
-          {/* Header Right Actions */}
+          {/* RIGHT: Mobile Drawer Hamburger Button */}
           <div className="navbar-actions">
-            <button
-              type="button"
-              className="navbar-auth-btn"
-              id="nav-open-auth-btn"
-              onClick={() => onOpenAuth && onOpenAuth('student', 'login')}
-            >
-              <span>Open Authentication Portal</span>
-              <ArrowRight size={15} className="cta-arrow" />
-            </button>
-
-            {/* Mobile Drawer Hamburger Button */}
             <button
               id="navbar-hamburger-btn"
               className="navbar-hamburger"
@@ -127,7 +115,7 @@ export default function Navbar({ onOpenAuth }) {
               aria-label="Toggle menu"
               aria-expanded={menuOpen}
             >
-              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
 
@@ -140,10 +128,10 @@ export default function Navbar({ onOpenAuth }) {
           <motion.div
             id="navbar-mobile-menu"
             className="navbar-mobile-menu"
-            initial={{ opacity: 0, y: -12, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -12, scale: 0.98 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.2 }}
           >
             <ul className="navbar-mobile-links" role="list">
               {NAV_LINKS.map(link => (
@@ -157,20 +145,6 @@ export default function Navbar({ onOpenAuth }) {
                 </li>
               ))}
             </ul>
-            <div className="navbar-mobile-actions">
-              <button
-                type="button"
-                className="navbar-auth-btn full-width"
-                onClick={() => {
-                  setMenuOpen(false);
-                  if (onOpenAuth) onOpenAuth('student', 'login');
-                }}
-                id="mobile-open-auth-btn"
-              >
-                <span>Open Authentication Portal</span>
-                <ArrowRight size={15} className="cta-arrow" />
-              </button>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
