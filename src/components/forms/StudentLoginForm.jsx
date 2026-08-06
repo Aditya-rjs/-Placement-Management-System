@@ -83,7 +83,7 @@ export default function StudentLoginForm({ onSwitchToRegister }) {
               aria-describedby={errors.email ? 'email-error-msg' : undefined}
             />
             <label className="floating-label" htmlFor="student-email">
-              Institutional Email (e.g. name@lnjpit.ac.in)
+              Institutional Email
             </label>
 
             {form.email && validateEmail(form.email) && (

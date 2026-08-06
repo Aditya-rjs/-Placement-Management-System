@@ -85,7 +85,7 @@ export default function TPOLoginForm() {
               autoComplete="email"
               aria-invalid={!!errors.email}
             />
-            <label className="floating-label" htmlFor="tpo-email">Officer Email (e.g. tpo@lnjpit.ac.in)</label>
+            <label className="floating-label" htmlFor="tpo-email">Officer Email</label>
             {form.email && validateEmail(form.email) && (
               <div className="input-trailing-box"><CheckCircle2 size={16} color="var(--color-success)" /></div>
             )}

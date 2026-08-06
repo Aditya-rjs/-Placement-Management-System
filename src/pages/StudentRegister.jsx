@@ -252,7 +252,7 @@ export default function StudentRegister() {
                     onBlur={() => setFocused(prev => ({ ...prev, fullName: false }))}
                     autoComplete="name"
                   />
-                  <label className="floating-label" htmlFor="reg-fullname">Full Name (e.g. Rahul Sharma)</label>
+                  <label className="floating-label" htmlFor="reg-fullname">Full Name</label>
                   {form.fullName && !errors.fullName && (
                     <div className="input-trailing-box"><CheckCircle2 size={15} color="var(--color-success)" /></div>
                   )}
@@ -276,7 +276,7 @@ export default function StudentRegister() {
                     maxLength={10}
                     autoComplete="tel"
                   />
-                  <label className="floating-label" htmlFor="reg-phone">Phone Number (10 digits)</label>
+                  <label className="floating-label" htmlFor="reg-phone">Phone Number</label>
                   {form.phone && !errors.phone && (
                     <div className="input-trailing-box"><CheckCircle2 size={15} color="var(--color-success)" /></div>
                   )}
@@ -299,7 +299,7 @@ export default function StudentRegister() {
                     onBlur={() => setFocused(prev => ({ ...prev, email: false }))}
                     autoComplete="email"
                   />
-                  <label className="floating-label" htmlFor="reg-email">Institutional Email (e.g. rahul@lnjpit.ac.in)</label>
+                  <label className="floating-label" htmlFor="reg-email">Institutional Email</label>
                   {form.email && !errors.email && (
                     <div className="input-trailing-box"><CheckCircle2 size={15} color="var(--color-success)" /></div>
                   )}
@@ -328,7 +328,7 @@ export default function StudentRegister() {
                     onFocus={() => setFocused(prev => ({ ...prev, regNumber: true }))}
                     onBlur={() => setFocused(prev => ({ ...prev, regNumber: false }))}
                   />
-                  <label className="floating-label" htmlFor="reg-regnumber">Registration Number (e.g. 21105128001)</label>
+                  <label className="floating-label" htmlFor="reg-regnumber">Registration Number</label>
                   {form.regNumber && !errors.regNumber && (
                     <div className="input-trailing-box"><CheckCircle2 size={15} color="var(--color-success)" /></div>
                   )}
