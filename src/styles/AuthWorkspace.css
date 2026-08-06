@@ -77,12 +77,23 @@
   margin-bottom: 2rem;
 }
 
-/* ── Nav Brand Block (Logo + College Name + System Name) ─── */
+/* ── Nav Brand Block (Centered Vertical Stack) ─────────── */
 .auth-workspace-nav-brand {
   display: flex;
-  align-items: flex-start;
-  gap: 0.9rem;
-  margin-bottom: 1.75rem;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  margin-bottom: 2.25rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.auth-workspace-nav-brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.25rem;
 }
 
 .auth-workspace-nav-brand-text {
@@ -92,21 +103,23 @@
   padding-top: 0.1rem;
 }
 
-.auth-workspace-nav-brand-text .institution-full-name {
-  font-size: 0.78rem;
+.auth-workspace-nav-brand .institution-full-name {
+  font-size: 0.875rem;
   font-weight: 700;
   color: var(--color-text);
-  letter-spacing: -0.01em;
-  line-height: 1.35;
+  letter-spacing: -0.015em;
+  line-height: 1.4;
   font-family: var(--font-heading);
+  margin: 0;
 }
 
-.auth-workspace-nav-brand-text .institution-system-name {
-  font-size: 0.65rem;
+.auth-workspace-nav-brand .institution-system-name {
+  font-size: 0.7rem;
   color: var(--color-text-muted);
   font-weight: 500;
-  letter-spacing: 0.01em;
-  margin-top: 0.05rem;
+  letter-spacing: 0.02em;
+  opacity: 0.7;
+  margin-top: 0.1rem;
 }
 
 .auth-workspace-nav-section-label {
@@ -495,7 +508,13 @@
   }
 
   .auth-workspace-nav-brand {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.75rem;
+    gap: 0.4rem;
+  }
+
+  .auth-workspace-nav-brand-logo {
+    margin-bottom: 0;
   }
 
   .auth-workspace-nav-section-label {

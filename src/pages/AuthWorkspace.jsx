@@ -130,11 +130,11 @@ export default function AuthWorkspace({ initialPortal: defaultPortal = 'student'
         {/* Header: Brand block — logo → college name → system name */}
         <div className="auth-workspace-nav-header">
           <div className="auth-workspace-nav-brand">
-            <LNJPITLogo size={40} />
-            <div className="auth-workspace-nav-brand-text">
-              <span className="institution-full-name">Loknayak Jai Prakash Institute of Technology, Chapra</span>
-              <span className="institution-system-name">Placement Management System</span>
+            <div className="auth-workspace-nav-brand-logo">
+              <LNJPITLogo size={60} />
             </div>
+            <h2 className="institution-full-name">Loknayak Jai Prakash Institute of Technology, Chapra</h2>
+            <span className="institution-system-name">Placement Management System</span>
           </div>
 
           <div className="auth-workspace-nav-section-label">Authentication Portals</div>
