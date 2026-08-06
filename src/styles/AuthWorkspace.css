@@ -42,11 +42,11 @@
 
 /* ── Left Navigation Panel ───────────────────────────────── */
 .auth-workspace-nav {
-  width: 32%;
-  min-width: 320px;
-  max-width: 420px;
+  width: 310px;
+  min-width: 300px;
+  max-width: 340px;
   min-height: 100vh;
-  background: radial-gradient(ellipse at 0% 0%, rgba(37, 99, 235, 0.12) 0%, var(--color-bg) 65%);
+  background: radial-gradient(ellipse at 0% 50%, rgba(30, 58, 138, 0.15) 0%, #0f172a 80%);
   border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
@@ -62,10 +62,10 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(circle at 20% 30%, black 30%, transparent 75%);
+    linear-gradient(to right, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse at 20% 30%, black 20%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
@@ -81,7 +81,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .auth-workspace-nav-header-logo-text {
@@ -90,35 +90,37 @@
 }
 
 .auth-workspace-nav-header-logo-text .institution-name {
-  font-size: 0.7rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-text-secondary);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   line-height: 1.3;
 }
 
 .auth-workspace-nav-header-logo-text .system-name {
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   color: var(--color-text-muted);
   font-weight: 500;
 }
 
 .auth-workspace-nav-section-label {
-  font-size: 0.675rem;
+  font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--color-text-muted);
-  margin-bottom: 1rem;
-  padding-left: 0.25rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* ── Nav Portal Cards ────────────────────────────────────── */
 .auth-workspace-nav-list {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 1.1rem;
   position: relative;
   z-index: 1;
 }
@@ -128,8 +130,8 @@
   display: flex;
   align-items: flex-start;
   gap: 0.85rem;
-  padding: 1rem 1rem 1rem 1.15rem;
-  background: rgba(255, 255, 255, 0.02);
+  padding: 1.1rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
   cursor: pointer;
@@ -148,35 +150,76 @@
   width: 3px;
   height: 0;
   background: var(--color-primary);
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 3px 3px 0;
   transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .auth-workspace-nav-card:hover {
   background: rgba(255, 255, 255, 0.04);
   border-color: rgba(255, 255, 255, 0.08);
-  transform: translateX(2px);
+  transform: translateX(3px);
 }
 
 /* Active State */
 .auth-workspace-nav-card.active {
-  background: rgba(37, 99, 235, 0.08);
+  background: rgba(37, 99, 235, 0.1);
   border-color: rgba(37, 99, 235, 0.25);
-  box-shadow:
-    0 0 20px rgba(37, 99, 235, 0.08),
-    inset 0 0 30px rgba(37, 99, 235, 0.03);
-  transform: translateX(4px) scale(1.01);
+  box-shadow: 
+    0 0 0 1px rgba(59, 130, 246, 0.35), 
+    0 4px 24px rgba(37, 99, 235, 0.18), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transform: translateX(4px);
+}
+
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.admin),
+.auth-workspace-nav-card.admin.active {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  box-shadow: 
+    0 0 0 1px rgba(239, 68, 68, 0.4), 
+    0 4px 24px rgba(239, 68, 68, 0.18), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.tpo),
+.auth-workspace-nav-card.tpo.active {
+  background: rgba(14, 165, 233, 0.1);
+  border-color: rgba(14, 165, 233, 0.3);
+  box-shadow: 
+    0 0 0 1px rgba(14, 165, 233, 0.4), 
+    0 4px 24px rgba(14, 165, 233, 0.18), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.student),
+.auth-workspace-nav-card.student.active {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 
+    0 0 0 1px rgba(16, 185, 129, 0.4), 
+    0 4px 24px rgba(16, 185, 129, 0.18), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .auth-workspace-nav-card.active::before {
-  height: 60%;
+  height: 70%;
 }
+
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.admin)::before,
+.auth-workspace-nav-card.admin.active::before { background: #ef4444; }
+
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.tpo)::before,
+.auth-workspace-nav-card.tpo.active::before { background: #0ea5e9; }
+
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.student)::before,
+.auth-workspace-nav-card.student.active::before { background: #10b981; }
+
 
 /* Card Icon */
 .auth-workspace-nav-card-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius-md);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,6 +250,22 @@
   box-shadow: 0 0 12px rgba(37, 99, 235, 0.15);
 }
 
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.admin) .auth-workspace-nav-card-icon,
+.auth-workspace-nav-card.admin.active .auth-workspace-nav-card-icon {
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.15);
+}
+
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.tpo) .auth-workspace-nav-card-icon,
+.auth-workspace-nav-card.tpo.active .auth-workspace-nav-card-icon {
+  box-shadow: 0 0 12px rgba(14, 165, 233, 0.15);
+}
+
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.student) .auth-workspace-nav-card-icon,
+.auth-workspace-nav-card.student.active .auth-workspace-nav-card-icon {
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
+}
+
+
 /* Card Text */
 .auth-workspace-nav-card-text {
   display: flex;
@@ -216,7 +275,7 @@
 }
 
 .auth-workspace-nav-card-title {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   font-weight: 700;
   color: var(--color-text);
   transition: color 0.2s ease;
@@ -229,10 +288,21 @@
   color: var(--color-primary-light);
 }
 
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.admin) .auth-workspace-nav-card-title,
+.auth-workspace-nav-card.admin.active .auth-workspace-nav-card-title { color: #fca5a5; }
+
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.tpo) .auth-workspace-nav-card-title,
+.auth-workspace-nav-card.tpo.active .auth-workspace-nav-card-title { color: #7dd3fc; }
+
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.student) .auth-workspace-nav-card-title,
+.auth-workspace-nav-card.student.active .auth-workspace-nav-card-title { color: #6ee7b7; }
+
+
 .auth-workspace-nav-card-desc {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: var(--color-text-muted);
   line-height: 1.4;
+  opacity: 0.65;
 }
 
 /* Active badge indicator */
@@ -240,40 +310,60 @@
   position: absolute;
   top: 1rem;
   right: 0.85rem;
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--color-primary);
-  box-shadow: 0 0 8px rgba(37, 99, 235, 0.5);
+  box-shadow: 0 0 10px 2px rgba(37, 99, 235, 0.6);
   animation: auth-pulse 2s ease-in-out infinite;
 }
 
+.auth-workspace-nav-card.admin.active .auth-workspace-nav-card-active-dot,
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.admin) .auth-workspace-nav-card-active-dot {
+  background: #ef4444;
+  box-shadow: 0 0 10px 2px rgba(239, 68, 68, 0.6);
+}
+
+.auth-workspace-nav-card.tpo.active .auth-workspace-nav-card-active-dot,
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.tpo) .auth-workspace-nav-card-active-dot {
+  background: #0ea5e9;
+  box-shadow: 0 0 10px 2px rgba(14, 165, 233, 0.6);
+}
+
+.auth-workspace-nav-card.student.active .auth-workspace-nav-card-active-dot,
+.auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.student) .auth-workspace-nav-card-active-dot {
+  background: #10b981;
+  box-shadow: 0 0 10px 2px rgba(16, 185, 129, 0.6);
+}
+
+
 @keyframes auth-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.3); }
+  50% { opacity: 0.4; transform: scale(1.4); }
 }
 
 /* ── Nav Footer ──────────────────────────────────────────── */
 .auth-workspace-nav-footer {
   margin-top: auto;
-  padding-top: 2rem;
+  padding-top: 1.5rem;
   position: relative;
   z-index: 1;
 }
 
 .auth-workspace-nav-footer-back {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.75rem;
   color: var(--color-text-muted);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
   padding: 0.5rem 0;
 }
 
 .auth-workspace-nav-footer-back:hover {
   color: var(--color-primary-light);
+  transform: translateX(-2px);
 }
 
 .auth-workspace-nav-footer-copy {
@@ -292,16 +382,60 @@
   position: relative;
   z-index: 2;
   overflow-y: auto;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
-/* Content Body (Centers the form card cleanly) */
+.auth-workspace-content::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 60%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Two ambient glow orbs */
+.auth-workspace-content::after {
+  content: '';
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .auth-workspace-content-body {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2.5rem 2rem;
+  padding: 3rem 2rem;
   position: relative;
+  z-index: 1;
+}
+
+/* Ambient glow orb 2 via a pseudo element on body to save DOM nodes */
+.auth-workspace-content-body::before {
+  content: '';
+  position: absolute;
+  bottom: 10%;
+  left: 10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ── Mobile: Horizontal Tab Bar ──────────────────────────── */
@@ -364,6 +498,7 @@
     border-bottom: 2px solid transparent;
     background: transparent;
     min-width: 90px;
+    box-shadow: none !important;
   }
 
   .auth-workspace-nav-card::before {
@@ -381,6 +516,24 @@
     border-bottom: 2px solid var(--color-primary);
     box-shadow: none;
     transform: none;
+  }
+
+  .auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.admin),
+  .auth-workspace-nav-card.admin.active {
+    background: rgba(239, 68, 68, 0.06);
+    border-bottom: 2px solid #ef4444;
+  }
+
+  .auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.tpo),
+  .auth-workspace-nav-card.tpo.active {
+    background: rgba(14, 165, 233, 0.06);
+    border-bottom: 2px solid #0ea5e9;
+  }
+
+  .auth-workspace-nav-card.active:has(.auth-workspace-nav-card-icon.student),
+  .auth-workspace-nav-card.student.active {
+    background: rgba(16, 185, 129, 0.06);
+    border-bottom: 2px solid #10b981;
   }
 
   .auth-workspace-nav-card-icon {
