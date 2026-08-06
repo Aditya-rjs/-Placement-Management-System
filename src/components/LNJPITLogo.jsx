@@ -5,9 +5,9 @@
 
 import React from 'react';
 
-export default function LNJPITLogo({ size = 42, className = '' }) {
+export default function LNJPITLogo({ size = 42, className = '', subtitle, hideText = false }) {
   return (
-    <div className={`lnjpit-logo-wrapper ${className}`} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+    <div className={`lnjpit-logo-wrapper ${className}`} style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
       <svg
         width={size}
         height={size}
@@ -46,14 +46,21 @@ export default function LNJPITLogo({ size = 42, className = '' }) {
         <path d="M52 106 L76 111 M52 112 L76 117 M84 111 L108 106 M84 117 L108 112" stroke="rgba(255,255,255,0.4)" strokeWidth="1" />
       </svg>
 
-      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15 }}>
-        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '0.875rem', fontWeight: 800, color: 'var(--color-text)', letterSpacing: '-0.01em' }}>
-          Loknayak Jai Prakash
-        </span>
-        <span style={{ fontSize: '0.725rem', color: 'var(--color-primary-light)', fontWeight: 600, letterSpacing: '0.02em' }}>
-          Institute of Technology, Chapra
-        </span>
-      </div>
+      {!hideText && (
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', lineHeight: 1.25 }}>
+          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-text)', letterSpacing: '-0.01em' }}>
+            Loknayak Jai Prakash
+          </span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--color-primary-light)', fontWeight: 700, letterSpacing: '0.01em' }}>
+            Institute of Technology, Chapra
+          </span>
+          {subtitle && (
+            <span style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)', fontWeight: 500, marginTop: '0.35rem', letterSpacing: '0.01em' }}>
+              {subtitle}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 }
