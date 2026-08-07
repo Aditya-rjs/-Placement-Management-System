@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Shield, Mail, Lock, Eye, EyeOff, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 import '../../styles/Auth.css';
 
@@ -13,6 +13,7 @@ function validateEmail(email) {
 }
 
 export default function AdminLoginForm() {
+  const navigate = useNavigate();
   const [form, setForm]               = useState({ email: '', password: '', rememberMe: false });
   const [errors, setErrors]           = useState({ email: '', password: '' });
   const [focused, setFocused]         = useState({ email: false, password: false });
@@ -60,10 +61,9 @@ export default function AdminLoginForm() {
     setTimeout(() => {
       setLoadingState('success');
       setTimeout(() => {
-        alert('Administrator authentication verified successfully (Backend integration enabled in Module 5).');
-        setLoadingState('idle');
-      }, 1000);
-    }, 1200);
+        navigate('/admin/dashboard');
+      }, 600);
+    }, 1000);
   };
 
   return (

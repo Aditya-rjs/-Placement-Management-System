@@ -15,11 +15,17 @@ import { useTheme } from './hooks/useTheme';
 import MainView        from './pages/MainView';
 import PlaceholderPage from './pages/PlaceholderPage';
 
+import AdminDashboardLayout from './pages/admin/AdminDashboardLayout';
+
 // ─── Layout wrapper ──────────────────────────────────────
 function AppLayout({ isDark, onToggleTheme }) {
   return (
     <Routes>
       <Route path="/" element={<MainView isDark={isDark} onToggleTheme={onToggleTheme} />} />
+
+      {/* Admin Dashboard Routes */}
+      <Route path="/admin"             element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="/admin/*"           element={<AdminDashboardLayout />} />
 
       {/* Legacy auth routes → redirect to home (auth is now inside MainView) */}
       <Route path="/auth"              element={<Navigate to="/" replace />} />
