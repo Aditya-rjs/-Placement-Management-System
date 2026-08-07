@@ -15,7 +15,7 @@ const DEFAULT_SUPER_ADMIN = {
   name: 'Aditya Raj Singh',
   email: 'bringaditya1212@gmail.com',
   // Pre-hashed SHA-256 for "Admin@9727"
-  passwordHash: '8e819b1db3c19e59d95fbc9a49aa5cfbb13e117ec1e9754f9d8544e39665c822',
+  passwordHash: 'cc719df05456c70500594912c704295bc5a3869fc7873d43e9469f8d082aae7f',
   role: 'SUPER_ADMIN', // 'SUPER_ADMIN' | 'NORMAL_ADMIN'
   status: 'active',     // 'active' | 'disabled'
   createdAt: '2026-08-07T00:00:00.000Z',
@@ -39,11 +39,18 @@ export function getAdminAccounts() {
     if (data) {
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Ensure default super admin always exists
-        const hasSuperAdmin = parsed.some(a => a.role === 'SUPER_ADMIN');
-        if (!hasSuperAdmin) {
+        // Ensure default super admin exists
+        const defaultIndex = parsed.findIndex(a => a.isDefault || a.email.toLowerCase() === DEFAULT_SUPER_ADMIN.email.toLowerCase());
+        if (defaultIndex === -1) {
           parsed.unshift(DEFAULT_SUPER_ADMIN);
           localStorage.setItem(STORAGE_KEY_ADMINS, JSON.stringify(parsed));
+        } else {
+          // If default super admin password hash is from old build, update it unless user modified it
+          const defAdmin = parsed[defaultIndex];
+          if (defAdmin.passwordHash === '8e819b1db3c19e59d95fbc9a49aa5cfbb13e117ec1e9754f9d8544e39665c822') {
+            defAdmin.passwordHash = DEFAULT_SUPER_ADMIN.passwordHash;
+            localStorage.setItem(STORAGE_KEY_ADMINS, JSON.stringify(parsed));
+          }
         }
         return parsed;
       }
