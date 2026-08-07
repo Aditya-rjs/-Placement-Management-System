@@ -12,10 +12,12 @@ function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+import { loginAdmin } from '../../services/adminAuthService';
+
 export default function AdminLoginForm() {
   const navigate = useNavigate();
   const [form, setForm]               = useState({ email: '', password: '', rememberMe: false });
-  const [errors, setErrors]           = useState({ email: '', password: '' });
+  const [errors, setErrors]           = useState({ email: '', password: '', auth: '' });
   const [focused, setFocused]         = useState({ email: false, password: false });
   const [showPass, setShowPass]       = useState(false);
   const [capsLockOn, setCapsLockOn]   = useState(false);
@@ -31,7 +33,9 @@ export default function AdminLoginForm() {
     const { name, value, type, checked } = e.target;
     const val = type === 'checkbox' ? checked : value;
     setForm(prev => ({ ...prev, [name]: val }));
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
+    if (errors[name] || errors.auth) {
+      setErrors(prev => ({ ...prev, [name]: '', auth: '' }));
+    }
   };
 
   const validate = () => {
@@ -44,26 +48,32 @@ export default function AdminLoginForm() {
 
     if (!form.password) {
       newErrors.password = 'Password is required.';
-    } else if (form.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters.';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
     setLoadingState('authenticating');
+    setErrors(prev => ({ ...prev, auth: '' }));
 
-    setTimeout(() => {
+    try {
+      await loginAdmin(form.email, form.password);
       setLoadingState('success');
       setTimeout(() => {
         navigate('/admin/dashboard');
       }, 600);
-    }, 1000);
+    } catch (err) {
+      setLoadingState('idle');
+      setErrors(prev => ({
+        ...prev,
+        auth: err.message || 'Authentication failed. Please check your credentials.',
+      }));
+    }
   };
 
   return (
@@ -131,6 +141,12 @@ export default function AdminLoginForm() {
             Forgot Password?
           </a>
         </div>
+
+        {errors.auth && (
+          <div className="validation-status-text invalid" style={{ marginBottom: '1.25rem', padding: '0.65rem 0.85rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 'var(--radius-md)' }}>
+            <AlertCircle size={15} /> {errors.auth}
+          </div>
+        )}
 
         {/* Submit Button */}
         <button

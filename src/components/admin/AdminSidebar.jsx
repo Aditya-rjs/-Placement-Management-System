@@ -1,6 +1,7 @@
 /**
  * AdminSidebar.jsx
  * Left Navigation Sidebar for Admin Dashboard UI.
+ * Integrates Role-Based Access Control (RBAC) & Admin Management navigation.
  */
 
 import React, { useState } from 'react';
@@ -21,12 +22,18 @@ import {
   ChevronDown,
   ChevronRight,
   Shield,
-  LogOut
+  ShieldAlert,
+  LogOut,
+  User
 } from 'lucide-react';
 import LNJPITLogo from '../LNJPITLogo';
 import { APP_CONFIG } from '../../config/app.config';
+import { getCurrentSession } from '../../services/adminAuthService';
 
 export default function AdminSidebar({ activeTab, onSelectTab, isOpen, onLogout }) {
+  const currentAdmin = getCurrentSession();
+  const isSuperAdmin = currentAdmin && currentAdmin.role === 'SUPER_ADMIN';
+
   // Submenu toggle states
   const [openSubmenus, setOpenSubmenus] = useState({
     'manage-students': true,
@@ -55,7 +62,7 @@ export default function AdminSidebar({ activeTab, onSelectTab, isOpen, onLogout 
           </div>
         </div>
         <div className="admin-portal-badge">
-          <Shield size={12} /> System Admin Portal
+          <Shield size={12} /> {isSuperAdmin ? 'Super Admin Portal' : 'Admin Portal'}
         </div>
       </div>
 
@@ -89,9 +96,28 @@ export default function AdminSidebar({ activeTab, onSelectTab, isOpen, onLogout 
           </div>
         </div>
 
+        {/* 3. Admin Management (Super Admin Exclusive) */}
+        {isSuperAdmin && (
+          <div
+            className={`admin-nav-item${activeTab === 'admin-management' ? ' active' : ''}`}
+            onClick={() => onSelectTab('admin-management')}
+            role="button"
+            tabIndex={0}
+            style={{ marginTop: '0.15rem' }}
+          >
+            <div className="admin-nav-item-left">
+              <ShieldAlert size={18} className="admin-nav-item-icon" color="#c084fc" />
+              <span style={{ color: '#c084fc', fontWeight: 600 }}>Admin Management</span>
+            </div>
+            <span className="admin-badge warning" style={{ fontSize: '0.6rem', padding: '0.1rem 0.4rem', background: 'rgba(168,85,247,0.15)', color: '#c084fc', borderColor: 'rgba(168,85,247,0.3)' }}>
+              Super
+            </span>
+          </div>
+        )}
+
         <div className="admin-nav-section-label">Student Administration</div>
 
-        {/* 3. Manage Students (Parent Submenu) */}
+        {/* 4. Manage Students (Parent Submenu) */}
         <div>
           <div
             className={`admin-nav-item${activeTab.startsWith('manage-students') ? ' active' : ''}`}
@@ -146,7 +172,7 @@ export default function AdminSidebar({ activeTab, onSelectTab, isOpen, onLogout 
 
         <div className="admin-nav-section-label">Recruitment &amp; Circulars</div>
 
-        {/* 4. Manage Jobs (Parent Submenu) */}
+        {/* 5. Manage Jobs (Parent Submenu) */}
         <div>
           <div
             className={`admin-nav-item${activeTab.startsWith('manage-jobs') ? ' active' : ''}`}
@@ -183,7 +209,7 @@ export default function AdminSidebar({ activeTab, onSelectTab, isOpen, onLogout 
           )}
         </div>
 
-        {/* 5. Notice Board (Parent Submenu) */}
+        {/* 6. Notice Board (Parent Submenu) */}
         <div>
           <div
             className={`admin-nav-item${activeTab.startsWith('notice-board') ? ' active' : ''}`}
@@ -223,19 +249,36 @@ export default function AdminSidebar({ activeTab, onSelectTab, isOpen, onLogout 
 
       {/* Sidebar Footer User Info & Logout */}
       <div className="admin-sidebar-footer">
-        <div className="admin-user-card">
+        <div
+          className="admin-user-card"
+          style={{ cursor: 'pointer' }}
+          onClick={() => onSelectTab('admin-profile')}
+          title="Click to view Account Settings &amp; Profile"
+        >
           <div className="admin-user-info">
-            <div className="admin-user-avatar">A</div>
+            <div
+              className="admin-user-avatar"
+              style={{
+                background: isSuperAdmin ? 'linear-gradient(135deg, #a855f7, #6b21a8)' : 'linear-gradient(135deg, #ef4444, #991b1b)',
+              }}
+            >
+              {currentAdmin?.name ? currentAdmin.name.charAt(0).toUpperCase() : 'A'}
+            </div>
             <div className="admin-user-details">
-              <span className="admin-user-name">Aditya Raj Singh</span>
-              <span className="admin-user-role">Super Admin</span>
+              <span className="admin-user-name">{currentAdmin?.name || 'Administrator'}</span>
+              <span className="admin-user-role" style={{ color: isSuperAdmin ? '#c084fc' : 'var(--color-text-muted)' }}>
+                {isSuperAdmin ? 'Super Admin' : 'Admin'}
+              </span>
             </div>
           </div>
           <button
             type="button"
             className="admin-header-icon-btn"
             title="Log Out"
-            onClick={onLogout}
+            onClick={(e) => {
+              e.stopPropagation();
+              onLogout();
+            }}
             style={{ width: '32px', height: '32px' }}
           >
             <LogOut size={14} />

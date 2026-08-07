@@ -8,11 +8,14 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminHeader from '../../components/admin/AdminHeader';
+import { clearCurrentSession } from '../../services/adminAuthService';
 import '../../styles/AdminDashboard.css';
 
 // ── Subview imports ──────────────────────────────────────
 import DashboardOverviewView     from './views/DashboardOverviewView';
 import AuthenticateStudentsView  from './views/AuthenticateStudentsView';
+import AdminManagementView       from './views/AdminManagementView';
+import AdminProfileView          from './views/AdminProfileView';
 import AddStudentView            from './views/AddStudentView';
 import DeleteStudentView         from './views/DeleteStudentView';
 import DownloadStudentDataView   from './views/DownloadStudentDataView';
@@ -46,6 +49,7 @@ export default function AdminDashboardLayout() {
   };
 
   const handleLogout = () => {
+    clearCurrentSession();
     navigate('/');
   };
 
@@ -57,6 +61,12 @@ export default function AdminDashboardLayout() {
 
       case 'authenticate-students':
         return <AuthenticateStudentsView />;
+
+      case 'admin-management':
+        return <AdminManagementView />;
+
+      case 'admin-profile':
+        return <AdminProfileView />;
 
       case 'manage-students/add':
         return <AddStudentView />;
@@ -102,6 +112,7 @@ export default function AdminDashboardLayout() {
         {/* Top Navigation Bar */}
         <AdminHeader
           activeTab={activeTab}
+          onSelectTab={handleSelectTab}
           onLogout={handleLogout}
           onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
         />
